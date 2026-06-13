@@ -106,7 +106,7 @@ input[type=range].dur-slider::-moz-range-thumb{width:18px;height:18px;border-rad
 
 /* ── Curve ── */
 .curve-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-#curve-svg{width:100%;height:200px;display:block;overflow:visible;cursor:ns-resize}
+#curve-svg{width:100%;height:200px;display:block;overflow:visible;cursor:ns-resize;touch-action:none}
 .curve-labels{display:flex;justify-content:space-between;padding-top:10px}
 .curve-labels span{font-size:.625rem;color:var(--text-3);font-weight:600;text-align:center;flex:1;letter-spacing:.06em;text-transform:uppercase}
 
@@ -477,7 +477,7 @@ function renderCurve(){
     g.setAttribute('class','cp'); g.setAttribute('data-i',i); g.style.cursor='ns-resize';
     const hit=ns('circle');
     hit.setAttribute('cx',pt.x); hit.setAttribute('cy',pt.y);
-    hit.setAttribute('r','14'); hit.setAttribute('fill','transparent');
+    hit.setAttribute('r','20'); hit.setAttribute('fill','transparent');
     g.appendChild(hit);
     const dot=ns('circle');
     dot.setAttribute('cx',pt.x); dot.setAttribute('cy',pt.y);
@@ -528,8 +528,12 @@ function setupDrag(){
 
   svg.addEventListener('touchstart', e=>{
     const t=e.touches[0];
-    const g=document.elementFromPoint(t.clientX,t.clientY)?.closest('.cp');
-    if(g){ drag=parseInt(g.getAttribute('data-i')); e.preventDefault(); }
+    const c=svgCoords(svg,t.clientX,t.clientY);
+    const xs=getXS();
+    let nearest=0,minDist=Infinity;
+    xs.forEach((x,i)=>{ const d=Math.abs(c.x-x); if(d<minDist){minDist=d;nearest=i;} });
+    drag=nearest;
+    e.preventDefault();
   },{passive:false});
   document.addEventListener('touchmove', e=>{
     if(drag===null) return;
