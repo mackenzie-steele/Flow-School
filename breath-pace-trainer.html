@@ -176,7 +176,7 @@ function playTone(freq, vol, dur, type = 'sine') {
     gain.connect(ctx.destination);
     osc.type = type;
     osc.frequency.value = freq;
-    const when = ctx.currentTime + 0.05;
+    const when = ctx.currentTime + 0.15;
     gain.gain.setValueAtTime(vol, when);
     gain.gain.exponentialRampToValueAtTime(0.0001, when + dur);
     osc.start(when);
@@ -364,16 +364,13 @@ document.getElementById('toggle-btn').addEventListener('click', async () => {
     if (audioEnabled) {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       await audioCtx.resume();
-      // Warm up the audio pipeline and wait until the AudioContext clock is running
+      // Warm up the audio pipeline, then wait 2 frames for it to initialize
       const buf = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
       const src = audioCtx.createBufferSource();
       src.buffer = buf;
       src.connect(audioCtx.destination);
       src.start(0);
-      await new Promise(r => {
-        const check = () => audioCtx.currentTime > 0.05 ? r() : requestAnimationFrame(check);
-        requestAnimationFrame(check);
-      });
+      await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
     }
     playTick(phases[0].id);
     setControlsDisabled(true);
