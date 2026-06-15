@@ -233,7 +233,7 @@ header, section, .wrap, .inner, .content, .results-inner, footer {
 .start-btn {
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 8px;
   background: var(--accent);
   color: #080808;
   border: none;
@@ -268,6 +268,8 @@ header, section, .wrap, .inner, .content, .results-inner, footer {
   transform: none;
   box-shadow: none;
 }
+
+button svg { width: 18px; height: 18px; flex-shrink: 0; }
 
 /* Secondary — bordered, low-key */
 .btn-secondary,
