@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Breath Pacer — Flow School</title>
+<link rel="stylesheet" href="global.css">
+<style>
+/* ── Hero override ── */
+.hero   { padding: 64px 0 48px; }
+.hero p { font-size: 1.0625rem; max-width: 560px; }
+
+/* ── Pacer visual ── */
+.pacer-section { display: flex; flex-direction: column; align-items: center; padding: 56px 0 44px; position: relative; }
+.pacer-svg     { width: 280px; height: 280px; overflow: visible; }
+#svg-count {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 52px; font-weight: 700; letter-spacing: -.04em;
+  fill: white; text-anchor: middle; dominant-baseline: central;
+  font-variant-numeric: tabular-nums;
+}
+#svg-label {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: .14em;
+  fill: rgba(255,255,255,.35); text-anchor: middle;
+}
+
+/* ── Controls card ── */
+.controls-card { margin-bottom: 20px; }
+.ctl-grid      { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; margin-bottom: 32px; }
+.ctl-label     { font-size: .5875rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-3); margin-bottom: 12px; display: block; }
+.time-btns     { display: flex; gap: 6px; }
+
+/* ── Button row ── */
+.btn-row   { display: flex; align-items: center; gap: 10px; padding-top: 28px; border-top: 1px solid var(--border-light); }
+.start-btn { padding: 12px 28px; }
+
+/* ── Ghost-small + Audio ── */
+.btn-ghost-sm       { background: none; border: none; color: var(--text-3); padding: 11px 16px; border-radius: var(--rf); font-size: .875rem; font-family: var(--font); cursor: pointer; transition: color .15s; }
+.btn-ghost-sm:hover { color: var(--text-2); }
+.btn-ghost-sm:disabled { opacity: .3; cursor: not-allowed; }
+
+.audio-btn       { display: flex; align-items: center; gap: 7px; margin-left: auto; background: none; border: 1px solid rgba(255,255,255,.12); color: var(--text-3); padding: 9px 16px; border-radius: var(--rf); font-size: .8125rem; font-weight: 600; font-family: var(--font); cursor: pointer; transition: all .15s; }
+.audio-btn:hover { color: var(--text-2); border-color: rgba(255,255,255,.25); }
+.audio-btn.on    { color: var(--text-2); border-color: rgba(255,255,255,.2); }
+.audio-btn.off   { opacity: .45; }
+
+/* ── Cards ── */
+.why-card p { font-size: .9375rem; line-height: 1.75; color: var(--text-2); }
+
+@media (max-width: 580px) {
+  .hero          { padding: 44px 0 32px; }
+  .pacer-section { padding: 44px 0 32px; }
+  .controls-card { padding: 24px 22px; }
+  .ctl-grid      { grid-template-columns: 1fr; gap: 18px; }
+  .btn-row       { flex-wrap: wrap; }
+  .start-btn     { width: 100%; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<header class="hdr">
+  <div class="hdr-i">
+    <a href="index.html" class="btn-ghost">← Tools</a>
+    <span class="hdr-logo">Flow School</span>
+    <div></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="inner">
+    <p class="page-eyebrow">Breath Pace Trainer</p>
+    <h1>Move at the speed of breath.</h1>
+    <p>Set your inhale and exhale lengths, press start, and practice cueing movement in rhythm with breath. The goal is not to count forever — it's to train your body to feel the pace until it becomes intuitive.</p>
+  </div>
+</section>
+
+<div class="wrap">
+
+  <!-- Pacer Visual -->
+  <div class="pacer-section">
+    <svg class="pacer-svg" id="pacer-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+      <g id="ticks"></g>
+      <text id="svg-count" x="140" y="131">—</text>
+      <text id="svg-label" x="140" y="171">READY</text>
+    </svg>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls-card">
+    <div class="ctl-grid">
+
+      <div class="ctl-group">
+        <span class="ctl-label">Inhale</span>
+        <div class="range-slider-wrap">
+          <span class="range-val" id="inhale-val">4s</span>
+          <input type="range" class="range-slider" id="inhale-slider" min="3" max="8" step="1" value="4">
+          <div class="range-ticks"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="range-ends"><span>3s</span><span>8s</span></div>
+        </div>
+      </div>
+
+      <div class="ctl-group">
+        <span class="ctl-label">Exhale</span>
+        <div class="range-slider-wrap">
+          <span class="range-val" id="exhale-val">4s</span>
+          <input type="range" class="range-slider" id="exhale-slider" min="3" max="8" step="1" value="4">
+          <div class="range-ticks"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+          <div class="range-ends"><span>3s</span><span>8s</span></div>
+        </div>
+      </div>
+
+
+    </div>
+
+    <div class="btn-row">
+      <button class="start-btn" id="toggle-btn">
+        <svg id="toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <span id="toggle-label">Start</span>
+      </button>
+      <button class="audio-btn on" id="audio-btn">
+        <svg id="audio-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+        </svg>
+        Sound
+      </button>
+    </div>
+  </div>
+
+  <div class="why-card">
+    <div class="card-eyebrow">Why this matters</div>
+    <p>Breath pace is where sequencing becomes teaching. Instead of stacking poses and cues on top of music, you begin to feel how breath, movement, rhythm, and attention can move together. This tool is here to help you practice that timing until it becomes something you can trust in your body.</p>
+  </div>
+
+</div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+const settings = { inhale: 4, exhale: 4, pause: 0 };
+
+let running        = false;
+let phaseIdx       = 0;
+let elapsed        = 0;
+let lastTs         = null;
+let rafId          = null;
+let lastPhaseSec   = -1;  // which whole second within the current phase we last ticked
+
+// ─── AUDIO ───────────────────────────────────────────────────────────────────
+
+let audioEnabled = true;
+let audioCtx     = null;
+
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playTone(freq, vol, dur, type = 'sine') {
+  if (!audioEnabled) return;
+  try {
+    const ctx  = getCtx();
+    const osc  = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = type;
+    osc.frequency.value = freq;
+    const when = ctx.currentTime + (ctx.currentTime < 0.5 ? 0.15 : 0.05);
+    gain.gain.setValueAtTime(vol, when);
+    gain.gain.exponentialRampToValueAtTime(0.0001, when + dur);
+    osc.start(when);
+    osc.stop(when + dur + 0.01);
+  } catch(e) {}
+}
+
+// Two sounds: one for active breath phases, one for pause
+function playTick(phaseId) {
+  if (phaseId === 'inhale') {
+    playTone(880, 0.07, 0.05);
+  } else if (phaseId === 'exhale') {
+    playTone(528, 0.07, 0.05);
+  } else {
+    playTone(660, 0.07, 0.05);
+  }
+}
+
+document.getElementById('audio-btn').addEventListener('click', () => {
+  audioEnabled = !audioEnabled;
+  const btn  = document.getElementById('audio-btn');
+  const icon = document.getElementById('audio-icon');
+  btn.classList.toggle('on', audioEnabled);
+  btn.classList.toggle('off', !audioEnabled);
+  if (audioEnabled) {
+    icon.innerHTML = `
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>`;
+  } else {
+    icon.innerHTML = `
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+      <line x1="23" y1="9" x2="17" y2="15"/>
+      <line x1="17" y1="9" x2="23" y2="15"/>`;
+  }
+});
+
+// ─── PHASES ──────────────────────────────────────────────────────────────────
+
+function getPhases() {
+  const p = [];
+  p.push({ id: 'inhale', label: 'Inhale', dur: settings.inhale });
+  if (settings.pause > 0) p.push({ id: 'hold', label: 'Hold', dur: settings.pause });
+  p.push({ id: 'exhale', label: 'Exhale', dur: settings.exhale });
+  if (settings.pause > 0) p.push({ id: 'hold', label: 'Hold', dur: settings.pause });
+  return p;
+}
+
+
+// ─── TICK CIRCLE ─────────────────────────────────────────────────────────────
+
+let breathProgress = 0;
+const TICK_COUNT = 60;
+const CX = 140, CY = 140, R_IN = 100, R_OUT = 112;
+
+function buildTicks() {
+  const g = document.getElementById('ticks');
+  for (let i = 0; i < TICK_COUNT; i++) {
+    const angle = (i / TICK_COUNT) * Math.PI * 2 - Math.PI / 2;
+    const line  = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', (CX + R_IN  * Math.cos(angle)).toFixed(2));
+    line.setAttribute('y1', (CY + R_IN  * Math.sin(angle)).toFixed(2));
+    line.setAttribute('x2', (CX + R_OUT * Math.cos(angle)).toFixed(2));
+    line.setAttribute('y2', (CY + R_OUT * Math.sin(angle)).toFixed(2));
+    line.setAttribute('stroke', 'white');
+    line.setAttribute('stroke-width', '2');
+    line.setAttribute('stroke-linecap', 'round');
+    line.setAttribute('opacity', '0.2');
+    g.appendChild(line);
+  }
+}
+
+function setTickOpacity(progress, baseOpacity = 0.2, fromEnd = false) {
+  const litCount = Math.round(progress * TICK_COUNT);
+  document.querySelectorAll('#ticks line').forEach((l, i) => {
+    const lit = fromEnd ? i >= TICK_COUNT - litCount : i < litCount;
+    l.setAttribute('opacity', lit ? '1' : baseOpacity);
+  });
+}
+
+// ─── DISPLAY ─────────────────────────────────────────────────────────────────
+
+function updateDisplay(phase, count) {
+  const countEl = document.getElementById('svg-count');
+  const labelEl = document.getElementById('svg-label');
+  countEl.textContent = count;
+  labelEl.textContent = phase.label.toUpperCase();
+  labelEl.style.fill = phase.id === 'inhale' ? 'white' : 'rgba(255,255,255,.35)';
+}
+
+function resetDisplay() {
+  const countEl = document.getElementById('svg-count');
+  const labelEl = document.getElementById('svg-label');
+  countEl.textContent = '—';
+  labelEl.textContent = 'READY';
+  labelEl.style.fill = 'rgba(255,255,255,.35)';
+  breathProgress = 0;
+  setTickOpacity(0);
+}
+
+// ─── LOOP ────────────────────────────────────────────────────────────────────
+
+function loop(ts) {
+  if (!running) return;
+  if (lastTs === null) lastTs = ts;
+  const delta = ts - lastTs;
+  lastTs = ts;
+  elapsed += delta;
+
+  const phases     = getPhases();
+  const phase      = phases[phaseIdx];
+  const phaseDurMs = phase.dur * 1000;
+  const remaining    = Math.max(0, phaseDurMs - elapsed);
+  const secsLeft     = Math.ceil(remaining / 1000);
+  const secsElapsed  = Math.min(phase.dur, Math.ceil(elapsed / 1000));
+  const displayCount = phase.id === 'inhale' ? secsElapsed : Math.max(1, secsLeft);
+
+  updateDisplay(phase, displayCount);
+
+  // Update tick brightness based on breath progress
+  const phaseProgress = Math.min(1, elapsed / phaseDurMs);
+  if (phase.id === 'inhale')      breathProgress = phaseProgress;
+  else if (phase.id === 'exhale') breathProgress = 1 - phaseProgress;
+  const baseOpacity = 0.2;
+  setTickOpacity(breathProgress, baseOpacity, phase.id === 'exhale');
+
+  // Fire tick at each new whole-second boundary within the phase.
+  const currentPhaseSec = Math.floor(elapsed / 1000);
+  if (currentPhaseSec > 0 && currentPhaseSec !== lastPhaseSec && remaining > 80) {
+    lastPhaseSec = currentPhaseSec;
+    playTick(phase.id);
+  }
+
+  if (elapsed >= phaseDurMs) {
+    elapsed -= phaseDurMs;
+    phaseIdx = (phaseIdx + 1) % phases.length;
+    const nextPhase = phases[phaseIdx];
+    lastPhaseSec = 0;
+    playTick(nextPhase.id);
+  }
+
+  rafId = requestAnimationFrame(loop);
+}
+
+// ─── CONTROLS ────────────────────────────────────────────────────────────────
+
+function setControlsDisabled(disabled) {
+  document.querySelectorAll('.time-btn').forEach(b => b.disabled = disabled);
+  document.getElementById('inhale-slider').disabled = disabled;
+  document.getElementById('exhale-slider').disabled = disabled;
+}
+
+function setToggleState(isRunning) {
+  const icon  = document.getElementById('toggle-icon');
+  const label = document.getElementById('toggle-label');
+  if (isRunning) {
+    icon.innerHTML = '<rect x="4" y="4" width="16" height="16"/>';
+    label.textContent = 'Stop';
+  } else {
+    icon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    label.textContent = 'Start';
+  }
+}
+
+document.getElementById('toggle-btn').addEventListener('click', async () => {
+  if (running) {
+    // Stop — full reset
+    running      = false;
+    cancelAnimationFrame(rafId);
+    phaseIdx     = 0;
+    elapsed      = 0;
+    lastTs       = null;
+    lastPhaseSec = -1;
+    resetDisplay();
+    setControlsDisabled(false);
+    setToggleState(false);
+  } else {
+    // Start fresh
+    running      = true;
+    lastTs       = null;
+    phaseIdx     = 0;
+    elapsed      = 0;
+    lastPhaseSec = 0;
+    const phases = getPhases();
+    if (audioEnabled) {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      await audioCtx.resume();
+      // Warm up the audio pipeline with a silent buffer, then wait one frame
+      const buf = audioCtx.createBuffer(1, 1, audioCtx.sampleRate);
+      const src = audioCtx.createBufferSource();
+      src.buffer = buf;
+      src.connect(audioCtx.destination);
+      src.start(0);
+      await new Promise(r => requestAnimationFrame(r));
+    }
+    playTick(phases[0].id);
+    setControlsDisabled(true);
+    setToggleState(true);
+    rafId = requestAnimationFrame(loop);
+  }
+});
+
+
+// ─── SLIDER + TIME BUTTON TOGGLES ────────────────────────────────────────────
+
+['inhale', 'exhale'].forEach(type => {
+  const slider = document.getElementById(`${type}-slider`);
+  const valEl  = document.getElementById(`${type}-val`);
+  slider.addEventListener('input', () => {
+    const v = parseInt(slider.value);
+    settings[type] = v;
+    valEl.textContent = (type === 'pause' && v === 0) ? 'None' : `${v}s`;
+  });
+});
+
+document.querySelectorAll('.time-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const type = btn.dataset.type;
+    const val  = parseInt(btn.dataset.val);
+    settings[type] = val;
+    document.querySelectorAll(`.time-btn[data-type="${type}"]`).forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.val) === val);
+    });
+  });
+});
+
+
+// ─── INIT ────────────────────────────────────────────────────────────────────
+
+buildTicks();
+</script>
+</body>
+</html>
