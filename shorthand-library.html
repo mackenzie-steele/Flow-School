@@ -584,7 +584,7 @@
   <header class="hdr">
     <div class="hdr-i">
       <a href="index.html" class="btn-ghost">← Tools</a>
-      <a href="index.html" class="hdr-logo">Flow School</a>
+      <div class="hdr-logo-wrap"><a href="index.html" class="hdr-logo">Flow School</a><span class="beta-tag">Beta</span></div>
       <div class="hdr-auth" id="hdr-auth"></div>
     </div>
   </header>
@@ -706,7 +706,11 @@
 
     function buildReverseLookup() {
       const m = new Map();
-      SHORTHAND.forEach(s => m.set(s.full.trim().toLowerCase(), s.short));
+      SHORTHAND.forEach(s => {
+        m.set(s.full.trim().toLowerCase(), s.short);
+        const stripped = s.full.replace(/\s*\(.*?\)\s*/g, '').trim().toLowerCase();
+        if (stripped && !m.has(stripped)) m.set(stripped, s.short);
+      });
       return m;
     }
 
@@ -829,7 +833,7 @@
     <td>${catTag(s.category)}</td>
     <td class="td-actions">
       <div class="lib-actions">
-        <button class="btn-icon copy-btn" data-short="${esc(s.short)}" title="Copy shorthand">
+        <button class="btn-icon copy-btn" data-short="${esc(s.short)}" title="Copy shorthand" data-tooltip="Copy">
           <span class="material-symbols-sharp">content_copy</span>
         </button>
       </div>
@@ -838,8 +842,26 @@
 
       tbody.querySelectorAll('.copy-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-          navigator.clipboard.writeText(btn.dataset.short).catch(() => { });
-          showToast(`Copied "${btn.dataset.short}"`);
+          const icon = btn.querySelector('.material-symbols-sharp');
+          const swap = name => {
+            icon.style.opacity = '0';
+            icon.style.transform = 'scale(0.65)';
+            setTimeout(() => {
+              icon.textContent = name;
+              icon.style.opacity = '';
+              icon.style.transform = '';
+            }, 120);
+          };
+          navigator.clipboard.writeText(btn.dataset.short)
+            .then(() => {
+              swap('check');
+              showToast(`Copied "${btn.dataset.short}"`);
+              setTimeout(() => swap('content_copy'), 2000);
+            })
+            .catch(() => {
+              swap('error');
+              setTimeout(() => swap('content_copy'), 2000);
+            });
         });
       });
     }
@@ -1019,6 +1041,7 @@
 
   </script>
   <script src="lib/nav.js"></script>
+  <script src="lib/tracker.js"></script>
 </body>
 
 </html>

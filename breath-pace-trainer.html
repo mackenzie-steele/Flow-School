@@ -177,7 +177,7 @@
   <header class="hdr">
     <div class="hdr-i">
       <a href="index.html" class="btn-ghost">← Tools</a>
-      <a href="index.html" class="hdr-logo">Flow School</a>
+      <div class="hdr-logo-wrap"><a href="index.html" class="hdr-logo">Flow School</a><span class="beta-tag">Beta</span></div>
       <div class="hdr-auth" id="hdr-auth"></div>
     </div>
   </header>
@@ -205,7 +205,7 @@
     <!-- Controls -->
     <div class="controls-actions">
       <button class="audio-btn on" id="audio-btn" title="Toggle sound">
-        <span class="material-symbols-sharp" id="audio-icon">volume_up</span>
+        <span class="material-symbols-sharp" id="audio-icon" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">volume_up</span>
       </button>
     </div>
     <div class="controls-card">
@@ -248,7 +248,7 @@
 
   <div class="cta-bar">
     <button class="start-btn" id="toggle-btn">
-      <span class="material-symbols-sharp" id="toggle-icon">play_arrow</span>
+      <span class="material-symbols-sharp" id="toggle-icon" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">play_arrow</span>
       <span id="toggle-label">Start</span>
     </button>
   </div>
@@ -516,6 +516,7 @@
     buildTicks();
   </script>
   <script src="lib/nav.js"></script>
+  <script src="lib/tracker.js"></script>
 
 </body>
 

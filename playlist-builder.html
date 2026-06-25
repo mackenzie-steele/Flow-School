@@ -301,7 +301,7 @@
     /* ── Song rows ── */
     .song {
       display: grid;
-      grid-template-columns: 28px 1fr auto 72px;
+      grid-template-columns: 28px 1fr auto 72px auto;
       align-items: center;
       gap: 14px;
       padding: 10px 0;
@@ -332,7 +332,7 @@
 
     .song-title {
       font-family: var(--font);
-      font-size: var(--fs-h6);
+      font-size: var(--fs-h7);
       font-weight: var(--weight-regular);
       line-height: var(--lh-heading);
       color: #ffffff;
@@ -391,6 +391,88 @@
       border-radius: 2px;
     }
 
+    /* ── Per-song copy button ── */
+    .song-copy {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    /* ── Save title modal ── */
+    .pl-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      backdrop-filter: blur(12px) saturate(140%);
+      -webkit-backdrop-filter: blur(12px) saturate(140%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+    }
+
+    .pl-modal-backdrop[hidden] { display: none; }
+
+    .pl-modal-card {
+      position: relative;
+      background: rgba(10, 10, 12, .82);
+      backdrop-filter: blur(48px) saturate(160%);
+      -webkit-backdrop-filter: blur(48px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, .09);
+      border-top-color: rgba(255, 255, 255, .2);
+      border-radius: 18px;
+      box-shadow:
+        0 8px 32px rgba(0, 0, 0, .55),
+        0 40px 100px rgba(0, 0, 0, .45),
+        inset 0 1px 0 rgba(255, 255, 255, .07);
+      padding: 32px;
+      width: min(400px, calc(100vw - 40px));
+      display: flex;
+      flex-direction: column;
+    }
+
+    .pl-modal-card h3 {
+      margin: 0 0 6px;
+      font-size: var(--fs-h6);
+      font-weight: var(--weight-medium);
+    }
+
+    .pl-modal-hint {
+      font-size: var(--fs-body);
+      color: var(--text-3);
+      margin: 0 0 20px;
+    }
+
+    .pl-modal-input {
+      width: 100%;
+      box-sizing: border-box;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 8px;
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: var(--fs-h7);
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color .18s, background .18s;
+    }
+
+    .pl-modal-input::placeholder {
+      color: rgba(255, 255, 255, .25);
+    }
+
+    .pl-modal-input:focus {
+      border-color: rgba(255, 255, 255, .32);
+      background: rgba(255, 255, 255, .09);
+    }
+
+    .pl-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
     @media (max-width: 580px) {
       .cfg-step {
         flex-direction: column;
@@ -407,7 +489,7 @@
       }
 
       .song {
-        grid-template-columns: 24px 1fr auto;
+        grid-template-columns: 24px 1fr auto auto;
       }
 
       .ebar {
@@ -436,7 +518,7 @@
   <header class="hdr">
     <div class="hdr-i">
       <a href="index.html" class="btn-ghost">← Tools</a>
-      <a href="index.html" class="hdr-logo">Flow School</a>
+      <div class="hdr-logo-wrap"><a href="index.html" class="hdr-logo">Flow School</a><span class="beta-tag">Beta</span></div>
       <div class="hdr-auth" id="hdr-auth"></div>
     </div>
   </header>
@@ -522,6 +604,18 @@
   </section>
 
   <div class="toast" id="toast"></div>
+
+  <div class="pl-modal-backdrop" id="pl-modal" hidden>
+    <div class="pl-modal-card" role="dialog" aria-modal="true" aria-labelledby="pl-modal-heading">
+      <h3 id="pl-modal-heading">Name your playlist</h3>
+      <p class="pl-modal-hint">Give it a name so you can find it later.</p>
+      <input type="text" class="pl-modal-input" id="pl-title-input" placeholder="Playlist name" maxlength="80" autocomplete="off">
+      <div class="pl-modal-actions">
+        <button class="btn-ghost" id="pl-modal-cancel">Cancel</button>
+        <button class="btn-primary" id="pl-modal-confirm">Save playlist</button>
+      </div>
+    </div>
+  </div>
 
   <div class="cta-bar">
     <button class="btn-primary" id="gen-btn">
@@ -893,11 +987,11 @@
         <div class="stat"><span class="stat-val">${avgBpm}</span><span class="stat-lbl">avg BPM</span></div>
       </div>
       <div class="res-actions">
-        <button class="btn-icon" id="regen-btn" title="Regenerate playlist">
+        <button class="btn-icon" id="regen-btn" title="Regenerate playlist" data-tooltip="Regenerate">
           <span class="material-symbols-sharp">refresh</span>
         </button>
-        <button class="btn-icon${S.saved ? ' saved' : ''}" id="save-btn" title="${S.saved ? 'Saved' : 'Save playlist'}">
-          <span class="material-symbols-sharp save-icon">${S.saved ? 'bookmark' : 'bookmark_border'}</span>
+        <button class="btn-icon${S.saved ? ' saved' : ''}" id="save-btn" title="${S.saved ? 'Saved' : 'Save playlist'}" data-tooltip="Save">
+          <span class="material-symbols-sharp save-icon">bookmark</span>
         </button>
       </div>
     </div>
@@ -921,6 +1015,11 @@
               <span class="song-dur">${fmt(s.dur)}</span>
             </div>
             <div class="ebar"><div class="efill" style="width:${s.energy}%;background:${sec.color}"></div></div>
+            <div class="song-copy">
+              <button class="btn-icon song-copy-btn" aria-label='Copy ${s.title} by ${s.artist}' data-tooltip="Copy">
+                <span class="material-symbols-sharp">content_copy</span>
+              </button>
+            </div>
           </div>
         `).join('')}
       </div>
@@ -941,15 +1040,69 @@
       setTimeout(() => el.classList.remove('show'), 2800);
     }
 
-    function handleSave() {
+    function defaultTitle() {
+      const arc = ARC_SHAPES[S.arcKey].name;
+      const style = S.style.charAt(0).toUpperCase() + S.style.slice(1);
+      return `${arc} · ${style} · ${S.duration}min`;
+    }
+
+    function openSaveModal() {
+      const modal = document.getElementById('pl-modal');
+      const input = document.getElementById('pl-title-input');
+      input.value = defaultTitle();
+      modal.removeAttribute('hidden');
+      // Select all so user can immediately type a replacement
+      requestAnimationFrame(() => { input.focus(); input.select(); });
+    }
+
+    function closeSaveModal() {
+      document.getElementById('pl-modal').setAttribute('hidden', '');
+    }
+
+    function confirmSave() {
+      const title = document.getElementById('pl-title-input').value.trim() || defaultTitle();
+      closeSaveModal();
+
+      const KEY = 'flowschool_playlists';
+      const entry = {
+        id: Date.now(),
+        title,
+        style: S.style,
+        mood: S.mood,
+        duration: S.duration,
+        arc: S.arcKey,
+        savedAt: Date.now(),
+      };
+      try {
+        const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+        localStorage.setItem(KEY, JSON.stringify([entry].concat(saved)));
+      } catch (_) {}
+
       S.saved = true;
       const btn = document.getElementById('save-btn');
       if (btn) {
-        btn.classList.add('saved'); btn.title = 'Saved';
+        btn.classList.add('saved');
+        btn.title = 'Saved';
         btn.querySelector('.save-icon').textContent = 'bookmark';
       }
-      toast('Playlist saved to your library.');
+      toast(`"${title}" saved to your library.`);
     }
+
+    function handleSave() {
+      if (S.saved) return; // already saved — no action
+      openSaveModal();
+    }
+
+    // Modal controls
+    document.getElementById('pl-modal-cancel').addEventListener('click', closeSaveModal);
+    document.getElementById('pl-modal-confirm').addEventListener('click', confirmSave);
+    document.getElementById('pl-title-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') confirmSave();
+      if (e.key === 'Escape') closeSaveModal();
+    });
+    document.getElementById('pl-modal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) closeSaveModal();
+    });
 
     // ─── CHIPS ───────────────────────────────────────────────────────────────────
 
@@ -996,6 +1149,27 @@
       S.pts = sampleArc(S.arcKey, getKnotCount(S.duration)); renderCurve();
     });
 
+    document.querySelector('.results').addEventListener('click', e => {
+      const btn = e.target.closest('.song-copy-btn');
+      if (!btn) return;
+      const row = btn.closest('.song');
+      const title = row.querySelector('.song-title').textContent;
+      const artist = row.querySelector('.song-artist').textContent;
+      const icon = btn.querySelector('.material-symbols-sharp');
+      const swap = name => {
+        icon.style.opacity = '0';
+        icon.style.transform = 'scale(0.65)';
+        setTimeout(() => {
+          icon.textContent = name;
+          icon.style.opacity = '';
+          icon.style.transform = '';
+        }, 120);
+      };
+      navigator.clipboard.writeText(`${title} — ${artist}`)
+        .then(() => { swap('check'); toast(`Copied: ${title}`); setTimeout(() => swap('content_copy'), 2000); })
+        .catch(() => { swap('error'); toast('Unable to copy.'); setTimeout(() => swap('content_copy'), 2000); });
+    });
+
     document.getElementById('gen-btn').addEventListener('click', () => {
       const btn = document.getElementById('gen-btn');
       const label = document.getElementById('gen-label');
@@ -1009,6 +1183,7 @@
     });
   </script>
   <script src="lib/nav.js"></script>
+  <script src="lib/tracker.js"></script>
 
 </body>
 

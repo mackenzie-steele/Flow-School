@@ -3,82 +3,1132 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flow School — Tools</title>
+  <title>Flow School</title>
   <link rel="stylesheet" href="global.css">
   <style>
-/* ── Index-specific ── */
-.hdr-by { font-size: var(--text-ui); color: var(--text-3); }
-.hero    { padding: 72px 0 56px; }
 
-@media (max-width: 640px) {
-  .hero { padding: 48px 0 40px; }
-}
+    /* ── Dashboard wrapper ───────────────────────────────── */
+    .db-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 40px 40px 100px;
+      max-width: 1080px;
+    }
+
+    /* ── Cards ───────────────────────────────────────────── */
+    .db-card {
+      border: 1px solid var(--border-light);
+      border-radius: var(--r);
+      background: rgba(255,255,255,.018);
+      padding: 22px 24px;
+    }
+
+    .db-eyebrow {
+      display: block;
+      font-size: 10px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 16px;
+    }
+
+    /* ── Row grids ───────────────────────────────────────── */
+    .db-row {
+      display: grid;
+      gap: 10px;
+    }
+
+    .db-row-2   { grid-template-columns: 1fr 1fr; }
+    .db-row-3-2 { grid-template-columns: 3fr 2fr; }
+    .db-row-2-3 { grid-template-columns: 2fr 3fr; }
+
+    /* ── Welcome ─────────────────────────────────────────── */
+    .db-welcome {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 32px 0 8px;
+    }
+
+    .db-greeting {
+      font-size: clamp(1.75rem, 3vw, 2.5rem);
+      font-weight: var(--weight-regular);
+      letter-spacing: -.02em;
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+
+    .db-subline {
+      font-size: var(--fs-body);
+      color: var(--text-3);
+      margin: 0;
+    }
+
+    .db-streak-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: 1px solid var(--accent-border);
+      border-radius: var(--rf);
+      background: var(--accent-dim);
+      flex-shrink: 0;
+    }
+
+    .db-streak-icon {
+      font-size: 18px;
+      color: var(--accent);
+    }
+
+    .db-streak-num {
+      font-size: var(--fs-h5);
+      font-weight: var(--weight-regular);
+      color: var(--accent);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .db-streak-lbl {
+      font-size: var(--text-small);
+      color: rgba(221,227,106,.7);
+      white-space: nowrap;
+    }
+
+    /* ── Weekly Play Prompt ──────────────────────────────── */
+    .db-prompt {
+      display: flex;
+      flex-direction: column;
+      background: rgba(255,255,255,.025) !important;
+      min-height: 180px;
+    }
+
+    .db-prompt-text {
+      font-size: var(--fs-h5);
+      font-weight: var(--weight-regular);
+      line-height: 1.35;
+      color: var(--text-1);
+      margin: 0 0 24px;
+      flex: 1;
+    }
+
+    .db-prompt-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .db-prompt-tag {
+      font-size: 10px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-dim);
+      border: 1px solid var(--accent-border);
+      padding: 3px 8px;
+      border-radius: var(--rf);
+    }
+
+    .db-prompt-date {
+      font-size: var(--text-small);
+      color: var(--text-3);
+      font-family: var(--font-mono);
+    }
+
+    /* ── Quick Start ─────────────────────────────────────── */
+    .db-quick-links {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .db-quick-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: var(--text-ui);
+      color: var(--text-2);
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+
+    .db-quick-link:hover {
+      background: rgba(255,255,255,.06);
+      color: var(--text-1);
+    }
+
+    .db-quick-link .material-symbols-sharp {
+      font-size: 16px;
+      color: var(--text-3);
+      flex-shrink: 0;
+      transition: color .15s;
+    }
+
+    .db-quick-link:hover .material-symbols-sharp {
+      color: var(--text-2);
+    }
+
+    /* ── Continue ────────────────────────────────────────── */
+    .db-continue-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .db-continue-scroll::-webkit-scrollbar { display: none; }
+
+    .db-continue-card {
+      flex-shrink: 0;
+      width: 192px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      text-decoration: none;
+      color: inherit;
+      background: rgba(255,255,255,.022);
+      transition: border-color .15s, background .15s;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .db-continue-card:hover {
+      border-color: rgba(255,255,255,.22);
+      background: rgba(255,255,255,.038);
+    }
+
+    .db-cc-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      background: rgba(255,255,255,.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .db-cc-icon .material-symbols-sharp {
+      font-size: 17px;
+      color: var(--text-2);
+    }
+
+    .db-cc-name {
+      font-size: var(--text-ui);
+      font-weight: var(--weight-medium);
+      color: var(--text-1);
+      line-height: 1.3;
+    }
+
+    .db-cc-time {
+      font-size: var(--text-small);
+      color: var(--text-3);
+      font-family: var(--font-mono);
+      margin-top: auto;
+    }
+
+    .db-continue-empty {
+      font-size: var(--text-ui);
+      color: var(--text-3);
+      font-style: italic;
+      margin: 0;
+    }
+
+    /* ── Next Step ───────────────────────────────────────── */
+    .db-next-step {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .db-next-because {
+      font-size: var(--text-small);
+      color: var(--text-3);
+      font-style: italic;
+      margin-bottom: 10px;
+    }
+
+    .db-next-title {
+      font-size: var(--fs-h5);
+      font-weight: var(--weight-regular);
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+
+    .db-next-desc {
+      font-size: var(--text-body-sm);
+      color: var(--text-3);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 20px;
+    }
+
+    /* ── Progress stats ──────────────────────────────────── */
+    .db-stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .db-stat-val {
+      font-size: var(--fs-h4);
+      font-weight: var(--weight-regular);
+      color: var(--text-1);
+      line-height: 1;
+      display: block;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .db-stat-lbl {
+      font-size: 10px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: .07em;
+      text-transform: uppercase;
+      color: var(--text-3);
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Contribution graph */
+    .db-contrib-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .db-contrib-month {
+      font-size: 10px;
+      font-weight: var(--weight-semibold);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .db-contrib-legend {
+      font-size: 9px;
+      color: var(--text-3);
+      font-family: var(--font-mono);
+    }
+
+    .db-contrib-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 4px;
+    }
+
+    .db-contrib-day {
+      aspect-ratio: 1;
+      border-radius: 3px;
+      background: rgba(255,255,255,.05);
+    }
+
+    .db-contrib-day.active   { background: rgba(221,227,106,.55); }
+    .db-contrib-day.is-today { box-shadow: 0 0 0 1.5px rgba(255,255,255,.4); }
+    .db-contrib-day.future   { background: rgba(255,255,255,.02); }
+
+    /* ── Score ───────────────────────────────────────────── */
+    /* ── Skill Map ───────────────────────────────────────── */
+    .db-skillmap-sub {
+      font-size: var(--text-body-sm);
+      color: var(--text-3);
+      line-height: 1.55;
+      margin: -4px 0 12px;
+    }
+
+    .db-skillmap-foot {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-top: 4px;
+    }
+
+    .db-skillmap-strong {
+      font-size: var(--text-ui);
+      color: var(--text-2);
+      margin: 0;
+    }
+
+    .db-skillmap-strong strong {
+      color: var(--text-1);
+      font-weight: var(--weight-medium);
+    }
+
+    .db-skillmap-suggest {
+      font-size: var(--text-body-sm);
+      color: var(--text-2);
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .db-skillmap-suggest a {
+      color: var(--text-1);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: rgba(255,255,255,.3);
+    }
+
+    .db-skillmap-suggest a:hover {
+      text-decoration-color: rgba(255,255,255,.7);
+    }
+
+    /* ── Saved items ─────────────────────────────────────── */
+    .db-saved-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-light);
+      text-decoration: none;
+      color: inherit;
+      transition: opacity .15s;
+    }
+
+    .db-saved-item:last-child { border-bottom: none; }
+    .db-saved-item:hover { opacity: .65; }
+
+    .db-saved-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .db-saved-icon .material-symbols-sharp { font-size: 16px; color: var(--text-2); }
+
+    .db-saved-info { flex: 1; min-width: 0; }
+
+    .db-saved-name {
+      display: block;
+      font-size: var(--text-ui);
+      color: var(--text-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .db-saved-sub {
+      display: block;
+      font-size: var(--text-small);
+      color: var(--text-3);
+    }
+
+    .db-saved-empty {
+      font-size: var(--text-ui);
+      color: var(--text-3);
+      font-style: italic;
+      margin: 0;
+    }
+
+    /* ── Events ──────────────────────────────────────────── */
+    .db-event {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .db-event:last-child { border-bottom: none; }
+
+    .db-event-date {
+      width: 34px;
+      flex-shrink: 0;
+      text-align: center;
+      padding-top: 2px;
+    }
+
+    .db-event-mo {
+      display: block;
+      font-size: 9px;
+      font-weight: var(--weight-bold);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .db-event-day {
+      display: block;
+      font-size: var(--fs-h6);
+      font-weight: var(--weight-regular);
+      color: var(--text-1);
+      line-height: 1.1;
+    }
+
+    .db-event-title {
+      font-size: var(--text-ui);
+      color: var(--text-1);
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+
+    .db-event-foot {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .db-event-type {
+      font-size: 9px;
+      font-weight: var(--weight-bold);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .db-event-time {
+      font-size: var(--text-small);
+      color: var(--text-3);
+      font-family: var(--font-mono);
+    }
+
+    /* ── Community feed ──────────────────────────────────── */
+    .db-feed-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .db-feed-item:last-child { border-bottom: none; }
+
+    .db-feed-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: var(--weight-bold);
+      color: var(--text-2);
+      flex-shrink: 0;
+    }
+
+    .db-feed-avatar.bonnie {
+      background: var(--accent-dim);
+      border-color: var(--accent-border);
+      color: var(--accent);
+    }
+
+    .db-feed-text {
+      font-size: var(--text-small);
+      color: var(--text-2);
+      flex: 1;
+      line-height: 1.4;
+    }
+
+    .db-feed-name { color: var(--text-1); font-weight: var(--weight-medium); }
+
+    .db-feed-time {
+      font-size: 10px;
+      color: var(--text-3);
+      font-family: var(--font-mono);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Bonnie's Corner ─────────────────────────────────── */
+    .db-bonnie-inner {
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+    }
+
+    .db-bonnie-label {
+      flex-shrink: 0;
+      width: 100px;
+    }
+
+    .db-bonnie-month {
+      font-size: var(--text-small);
+      color: var(--text-3);
+      margin-top: 6px;
+    }
+
+    .db-bonnie-content h4 {
+      font-size: var(--fs-h5);
+      font-weight: var(--weight-regular);
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .db-bonnie-content p {
+      font-size: var(--text-body-sm);
+      color: var(--text-2);
+      line-height: 1.7;
+      margin: 0;
+      max-width: 520px;
+    }
+
+
+    /* ── Responsive ──────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .db-row-2,
+      .db-row-3-2,
+      .db-row-2-3 { grid-template-columns: 1fr; }
+
+      .db-stats-row { grid-template-columns: repeat(2, 1fr); }
+
+      .db-bonnie-inner { flex-direction: column; gap: 16px; }
+      .db-bonnie-label { width: auto; }
+    }
+
+    @media (max-width: 768px) {
+      .db-wrap { padding: 24px 20px 80px; }
+    }
+
+    @media (max-width: 480px) {
+      .db-wrap { padding: 72px 16px 80px; }
+      .db-welcome { flex-direction: column; gap: 16px; }
+    }
+
   </style>
 </head>
 <body>
 
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
 
-<header class="hdr">
-  <div class="hdr-i">
-    <div></div>
-    <a href="index.html" class="hdr-logo">Flow School</a>
-    <div class="hdr-auth" id="hdr-auth"></div>
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Open navigation">
+    <span class="material-symbols-sharp">menu</span>
+  </button>
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <div class="app-shell">
+
+    <!-- ── Sidebar ─────────────────────────────────────────── -->
+    <aside class="app-sidebar" id="app-sidebar">
+
+      <div class="sidebar-logo-wrap">
+        <a href="index.html" class="sidebar-logo">Flow School</a>
+        <span class="beta-tag">Beta</span>
+      </div>
+
+      <nav class="sidebar-nav">
+
+        <div class="nav-section">
+          <a href="index.html" class="nav-item active">
+            <span class="material-symbols-sharp">space_dashboard</span>
+            Dashboard
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <button class="nav-section-toggle" aria-expanded="true">
+            Learn
+            <span class="material-symbols-sharp nav-chevron">expand_more</span>
+          </button>
+          <div class="nav-section-items">
+            <a href="elements-of-flow-lab.html" class="nav-item">Elements of Flow Lab</a>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <button class="nav-section-toggle" aria-expanded="true">
+            Practice
+            <span class="material-symbols-sharp nav-chevron">expand_more</span>
+          </button>
+          <div class="nav-section-items">
+            <a href="movement-experiment-generator.html" class="nav-item">Movement Experiments</a>
+            <a href="arbitrary-rule-generator.html" class="nav-item">Arbitrary Rules</a>
+            <a href="breath-pace-trainer.html" class="nav-item">Breath Pacer</a>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <button class="nav-section-toggle" aria-expanded="true">
+            Create
+            <span class="material-symbols-sharp nav-chevron">expand_more</span>
+          </button>
+          <div class="nav-section-items">
+            <a href="playlist-builder.html" class="nav-item">Playlist Builder</a>
+            <a href="shorthand-library.html" class="nav-item">Shorthand Library</a>
+            <a href="flow-checker.html" class="nav-item">Flow Checker</a>
+          </div>
+        </div>
+
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="hdr-auth" id="hdr-auth"></div>
+      </div>
+
+    </aside>
+
+    <!-- ── Main ────────────────────────────────────────────── -->
+    <main class="app-main">
+      <div class="db-wrap">
+
+        <!-- 1. Welcome -->
+        <div class="db-welcome">
+          <div>
+            <h2 class="db-greeting" id="db-greeting">Good morning.</h2>
+            <p class="db-subline" id="db-subline"></p>
+          </div>
+          <div class="db-streak-pill" id="db-streak-pill">
+            <span class="material-symbols-sharp db-streak-icon">local_fire_department</span>
+            <span class="db-streak-num" id="db-streak-num">0</span>
+            <span class="db-streak-lbl">day streak</span>
+          </div>
+        </div>
+
+        <!-- 2. Weekly Play Prompt + Quick Start -->
+        <div class="db-row db-row-3-2">
+
+          <div class="db-card db-prompt">
+            <span class="db-eyebrow">Weekly Play Prompt</span>
+            <p class="db-prompt-text" id="db-prompt-text"></p>
+            <div class="db-prompt-foot">
+              <span class="db-prompt-tag" id="db-prompt-tag"></span>
+              <span class="db-prompt-date" id="db-prompt-date"></span>
+            </div>
+          </div>
+
+          <div class="db-card">
+            <span class="db-eyebrow">Quick Start</span>
+            <div class="db-quick-links">
+              <a href="movement-experiment-generator.html" class="db-quick-link">
+                <span class="material-symbols-sharp">experiment</span>
+                Movement Experiment
+              </a>
+              <a href="arbitrary-rule-generator.html" class="db-quick-link">
+                <span class="material-symbols-sharp">casino</span>
+                Arbitrary Rule
+              </a>
+              <a href="playlist-builder.html" class="db-quick-link">
+                <span class="material-symbols-sharp">queue_music</span>
+                Build Playlist
+              </a>
+              <a href="shorthand-library.html" class="db-quick-link">
+                <span class="material-symbols-sharp">book</span>
+                Shorthand Library
+              </a>
+              <a href="elements-of-flow-lab.html" class="db-quick-link">
+                <span class="material-symbols-sharp">science</span>
+                Elements of Flow
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3. Continue Where You Left Off -->
+        <div class="db-card">
+          <span class="db-eyebrow">Continue Where You Left Off</span>
+          <div class="db-continue-scroll" id="db-continue-scroll"></div>
+        </div>
+
+        <!-- 4. Suggested Next Step + Practice Progress -->
+        <div class="db-row db-row-2">
+
+          <div class="db-card db-next-step" id="db-next-card">
+            <span class="db-eyebrow">Suggested Next Step</span>
+          </div>
+
+          <div class="db-card">
+            <span class="db-eyebrow">Practice Progress</span>
+            <div class="db-stats-row" id="db-stats-row"></div>
+            <div>
+              <div class="db-contrib-head">
+                <span class="db-contrib-month" id="db-contrib-month"></span>
+                <span class="db-contrib-legend">Active days</span>
+              </div>
+              <div class="db-contrib-grid" id="db-contrib-grid"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 5. Flow School Score + Recently Saved -->
+        <div class="db-row db-row-2-3">
+
+          <div class="db-card" id="db-score-card">
+            <span class="db-eyebrow">Flow School Score</span>
+          </div>
+
+          <div class="db-card">
+            <span class="db-eyebrow">Recently Saved</span>
+            <div id="db-saved-list"></div>
+          </div>
+
+        </div>
+
+        <!-- 6. Upcoming Events + Community Activity -->
+        <div class="db-row db-row-2">
+
+          <div class="db-card">
+            <span class="db-eyebrow">Upcoming</span>
+            <div id="db-events-list"></div>
+          </div>
+
+          <div class="db-card">
+            <span class="db-eyebrow">Community</span>
+            <div id="db-community-list"></div>
+          </div>
+
+        </div>
+
+        <!-- 7. Bonnie's Corner -->
+        <div class="db-card">
+          <div class="db-bonnie-inner">
+            <div class="db-bonnie-label">
+              <span class="db-eyebrow">This Month</span>
+            </div>
+            <div class="db-bonnie-content">
+              <h4>Finding your rhythm.</h4>
+              <p>June is about developing your internal timing as a teacher. Start by tracking your breath cues — are you giving students enough time to actually breathe? Try the Breath Pacer to build your internal clock, then apply it in your next class. The goal isn't to be perfectly timed. It's to become aware of the gap between what you think you're giving and what you're actually giving.</p>
+              <a href="breath-pace-trainer.html" class="btn-secondary" style="margin-top:18px;display:inline-flex;align-items:center;gap:8px">
+                Try the Breath Pacer
+                <span class="material-symbols-sharp" style="font-size:14px">arrow_forward</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </main>
+
   </div>
-</header>
 
-<section class="hero">
-  <div class="inner">
-    <h3>Own the hell out of your voice.</h3>
-    <p>A creative studio for yoga teachers. Tools to build, explore, and create classes that sound unmistakably like you.</p>
-  </div>
-</section>
+  <script src="data/dashboard-daily-quotes.js"></script>
+  <script src="data/dashboard-weekly-prompts.js"></script>
+  <script src="data/dashboard-data.js"></script>
+  <script src="lib/nav.js"></script>
+  <script>
+  (function () {
 
-<div class="tools">
-  <div class="inner">
-    <div class="tools-grid">
+    // ── State ───────────────────────────────────────────────────────
+    var STATS_KEY  = 'flowschool_stats';
+    var RECENT_KEY = 'flowschool_recent';
+    var SEEDED_KEY = 'flowschool_seeded';
 
-      <a href="playlist-builder.html" class="tool-card">
-        <span class="tool-num label-2">01</span>
-        <h4 class="tool-name">Playlist Builder</h4>
-        <p class="tool-desc">Shape the energy of your class with music that matches the arc you're building. Set the mood, design the curve, and let the music support the flow.</p>
-        <span class="button-text">Open tool <span class="material-symbols-sharp" style="font-size:16px;pointer-events:none">arrow_forward</span></span>
-      </a>
+    function seedDemoData() {
+      if (localStorage.getItem(SEEDED_KEY)) return;
+      var today    = new Date();
+      var todayDay = today.getDate();
+      var demoActiveDays = [1,3,5,6,8,10,11,13,15,16,18].filter(function (d) { return d <= todayDay; });
+      localStorage.setItem(STATS_KEY, JSON.stringify({
+        streak:               5,
+        longestStreak:        12,
+        lastActive:           today.toISOString().split('T')[0],
+        daysActive:           demoActiveDays,
+        experimentsCompleted: 12,
+        rulesGenerated:       28,
+        playlistsBuilt:       3,
+        score:                890,
+        hoursTotal:           14,
+      }));
+      localStorage.setItem(RECENT_KEY, JSON.stringify([
+        { name: 'Movement Experiments', icon: 'experiment',       href: 'movement-experiment-generator.html', time: Date.now() - 86400000 * 1 },
+        { name: 'Arbitrary Rules',      icon: 'casino',           href: 'arbitrary-rule-generator.html',      time: Date.now() - 86400000 * 2 },
+        { name: 'Playlist Builder',     icon: 'queue_music',      href: 'playlist-builder.html',              time: Date.now() - 86400000 * 2 },
+        { name: 'Shorthand Library',    icon: 'book',             href: 'shorthand-library.html',             time: Date.now() - 86400000 * 3 },
+        { name: 'Breath Pacer',         icon: 'air',              href: 'breath-pace-trainer.html',           time: Date.now() - 86400000 * 4 },
+        { name: 'Elements of Flow Lab', icon: 'science',          href: 'elements-of-flow-lab.html',          time: Date.now() - 86400000 * 5 },
+      ]));
+      localStorage.setItem(SEEDED_KEY, '1');
+    }
 
-      <a href="movement-experiment-generator.html" class="tool-card">
-        <span class="tool-num label-2">02</span>
-        <h4 class="tool-name">Movement Experiments</h4>
-        <p class="tool-desc">Shuffle through 28 creative constraints by Bonnie Weeks. Break patterns, expand your movement vocabulary, and build a practice that teaches from the inside out.</p>
-        <span class="button-text">Open tool <span class="material-symbols-sharp" style="font-size:16px;pointer-events:none">arrow_forward</span></span>
-      </a>
+    function loadStats() {
+      try { return JSON.parse(localStorage.getItem(STATS_KEY) || '{}'); } catch (_) { return {}; }
+    }
 
-      <a href="arbitrary-rule-generator.html" class="tool-card">
-        <span class="tool-num label-2">03</span>
-        <h4 class="tool-name">Arbitrary Rules</h4>
-        <p class="tool-desc">Generate creative constraints for your next class. Remove an option. Find a new one. Play before you plan.</p>
-        <span class="button-text">Open tool <span class="material-symbols-sharp" style="font-size:16px;pointer-events:none">arrow_forward</span></span>
-      </a>
+    function dayOfYear() {
+      var now = new Date();
+      return Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    }
 
-      <a href="breath-pace-trainer.html" class="tool-card">
-        <span class="tool-num label-2">04</span>
-        <h4 class="tool-name">Breath Pace Trainer</h4>
-        <p class="tool-desc">Build a consistent breath tempo and train your internal clock. Set your inhale and exhale, follow the pacer, and let breath become your anchor.</p>
-        <span class="button-text">Open tool <span class="material-symbols-sharp" style="font-size:16px;pointer-events:none">arrow_forward</span></span>
-      </a>
+    function timeAgo(ts) {
+      var diff = (Date.now() - ts) / 1000;
+      if (diff < 60)    return 'Just now';
+      if (diff < 3600)  return Math.floor(diff / 60) + 'm ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+      return Math.floor(diff / 86400) + 'd ago';
+    }
 
-      <a href="shorthand-library.html" class="tool-card">
-        <span class="tool-num label-2">05</span>
-        <h4 class="tool-name">Shorthand Library</h4>
-        <p class="tool-desc">The Flow School Method shorthand for writing classes you can easily remember, repeat, and refine.</p>
-        <span class="button-text">Open tool <span class="material-symbols-sharp" style="font-size:16px;pointer-events:none">arrow_forward</span></span>
-      </a>
-    </div>
-  </div>
-</div>
+    // ── Renderers ───────────────────────────────────────────────────
+    function renderWelcome(stats) {
+      var h = new Date().getHours();
+      var greeting = h < 12 ? 'Good morning.' : h < 17 ? 'Good afternoon.' : 'Good evening.';
+      document.getElementById('db-greeting').textContent = greeting;
+      document.getElementById('db-subline').textContent  = DAILY_SUBLINES[dayOfYear() % DAILY_SUBLINES.length];
+      document.getElementById('db-streak-num').textContent = stats.streak || 0;
+      if (!stats.streak) document.getElementById('db-streak-pill').style.display = 'none';
+    }
+
+    function renderPrompt() {
+      var weekOfYear = Math.floor(dayOfYear() / 7);
+      var prompt = DAILY_PROMPTS[weekOfYear % DAILY_PROMPTS.length];
+      document.getElementById('db-prompt-text').textContent = prompt.text;
+      document.getElementById('db-prompt-tag').textContent  = prompt.hint;
+      var today  = new Date();
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      // Show the Monday–Sunday range for the current week
+      var dow       = today.getDay(); // 0 = Sun
+      var monday    = new Date(today); monday.setDate(today.getDate() - ((dow + 6) % 7));
+      var sunday    = new Date(monday); sunday.setDate(monday.getDate() + 6);
+      var weekLabel = months[monday.getMonth()] + ' ' + monday.getDate() + ' – ' + months[sunday.getMonth()] + ' ' + sunday.getDate();
+      document.getElementById('db-prompt-date').textContent = weekLabel;
+    }
+
+    function renderContinue() {
+      var el = document.getElementById('db-continue-scroll');
+      var recent = [];
+      try { recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (_) {}
+      recent = recent.filter(function (r) { return r.href !== 'story-structure.html' && r.href !== 'movement-planes-lab.html'; });
+      if (!recent.length) {
+        el.innerHTML = '<p class="db-continue-empty">Visit a tool to see it here.</p>';
+        return;
+      }
+      el.innerHTML = recent.map(function (r) {
+        return '<a href="' + r.href + '" class="db-continue-card">' +
+          '<div class="db-cc-icon"><span class="material-symbols-sharp">' + r.icon + '</span></div>' +
+          '<div class="db-cc-name">' + r.name + '</div>' +
+          '<div class="db-cc-time">' + timeAgo(r.time) + '</div>' +
+        '</a>';
+      }).join('');
+    }
+
+    function renderNextStep() {
+      var recent = [];
+      try { recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch (_) {}
+      var lastPage = recent.length ? recent[0].href : 'default';
+      var step = null;
+      for (var i = 0; i < NEXT_STEPS.length; i++) {
+        if (NEXT_STEPS[i].trigger === lastPage) { step = NEXT_STEPS[i]; break; }
+      }
+      if (!step) {
+        for (var j = 0; j < NEXT_STEPS.length; j++) {
+          if (NEXT_STEPS[j].trigger === 'default') { step = NEXT_STEPS[j]; break; }
+        }
+      }
+      var card = document.getElementById('db-next-card');
+      card.innerHTML =
+        '<span class="db-eyebrow">Next Step</span>' +
+        '<h3 class="db-next-title">' + step.title + '</h3>' +
+        '<p class="db-next-desc">' + step.desc + '</p>' +
+        '<a href="' + step.href + '" class="btn-primary" style="align-self:flex-start">' + step.label + '</a>';
+    }
+
+    function renderProgress(stats) {
+      var statsEl = document.getElementById('db-stats-row');
+      statsEl.innerHTML = [
+        { val: stats.streak || 0,               lbl: 'Day streak'   },
+        { val: stats.experimentsCompleted || 0,  lbl: 'Experiments'  },
+        { val: stats.rulesGenerated || 0,        lbl: 'Rules'        },
+        { val: stats.hoursTotal || 0,            lbl: 'Hours'        },
+      ].map(function (s) {
+        return '<div><span class="db-stat-val">' + s.val + '</span><span class="db-stat-lbl">' + s.lbl + '</span></div>';
+      }).join('');
+
+      var today = new Date();
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      document.getElementById('db-contrib-month').textContent = months[today.getMonth()] + ' ' + today.getFullYear();
+      var daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+      var active = stats.daysActive || [];
+      var todayDate = today.getDate();
+      document.getElementById('db-contrib-grid').innerHTML = Array.from({ length: daysInMonth }, function (_, i) {
+        var day = i + 1;
+        var cls = 'db-contrib-day';
+        if (day > todayDate)       cls += ' future';
+        else if (active.indexOf(day) !== -1) cls += ' active';
+        if (day === todayDate)     cls += ' is-today';
+        return '<div class="' + cls + '" title="' + months[today.getMonth()] + ' ' + day + '"></div>';
+      }).join('');
+    }
+
+    // ── Skill Map renderer ──────────────────────────────────────────
+    // When Supabase is ready: replace SKILL_MAP_DATA with a query to
+    // `user_skill_progress` filtered by user_id, then call renderSkillMap().
+    function renderSkillMap() {
+      var data = SKILL_MAP_DATA;
+      var cx = 160, cy = 130, r = 80;
+      var n = data.length;
+
+      function angle(i) { return (i / n) * 2 * Math.PI - Math.PI / 2; }
+
+      function pt(pct, i) {
+        var a = angle(i);
+        return [+(cx + (pct / 100) * r * Math.cos(a)).toFixed(1), +(cy + (pct / 100) * r * Math.sin(a)).toFixed(1)];
+      }
+
+      var gridSVG = [25, 50, 75, 100].map(function (pct, gi) {
+        var pts = data.map(function (_, i) { var p = pt(pct, i); return p[0] + ',' + p[1]; }).join(' ');
+        return '<polygon points="' + pts + '" fill="none" stroke="rgba(255,255,255,' + (0.05 + gi * 0.025).toFixed(3) + ')" stroke-width="0.75"/>';
+      }).join('');
+
+      var axisSVG = data.map(function (_, i) {
+        var p = pt(100, i);
+        return '<line x1="' + cx + '" y1="' + cy + '" x2="' + p[0] + '" y2="' + p[1] + '" stroke="rgba(255,255,255,.1)" stroke-width="0.75"/>';
+      }).join('');
+
+      var dataPts = data.map(function (d, i) { var p = pt(d.score, i); return p[0] + ',' + p[1]; }).join(' ');
+      var dataSVG = '<polygon points="' + dataPts + '" fill="rgba(221,227,106,.13)" stroke="rgba(221,227,106,.8)" stroke-width="1.5" stroke-linejoin="round"/>';
+
+      var dotsSVG = data.map(function (d, i) {
+        var p = pt(d.score, i);
+        return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="2.5" fill="rgba(221,227,106,.95)"/>';
+      }).join('');
+
+      var LABEL_OFFSET = 20;
+      var labelsSVG = data.map(function (d, i) {
+        var a = angle(i);
+        var lx = +(cx + (r + LABEL_OFFSET) * Math.cos(a)).toFixed(1);
+        var ly = +(cy + (r + LABEL_OFFSET) * Math.sin(a)).toFixed(1);
+        var words = d.skill.split(' ');
+        var anchor = i === 1 ? 'start' : i === 3 ? 'end' : 'middle';
+        var dyAdj  = (i === 1 || i === 3) ? 3 : 0;
+        if (words.length === 1) {
+          return '<text x="' + lx + '" y="' + (ly + dyAdj) + '" text-anchor="' + anchor + '" fill="rgba(255,255,255,.4)" font-size="9" font-family="inherit" letter-spacing=".04em">' + d.skill + '</text>';
+        }
+        return '<text x="' + lx + '" text-anchor="' + anchor + '" fill="rgba(255,255,255,.4)" font-size="9" font-family="inherit" letter-spacing=".04em">' +
+          '<tspan x="' + lx + '" y="' + (ly - 4) + '">' + words[0] + '</tspan>' +
+          '<tspan x="' + lx + '" y="' + (ly + 8) + '">' + words.slice(1).join(' ') + '</tspan>' +
+          '</text>';
+      }).join('');
+
+      var strongest = data.reduce(function (a, b) { return a.score > b.score ? a : b; });
+      var weakest   = data.reduce(function (a, b) { return a.score < b.score ? a : b; });
+      var card = document.getElementById('db-score-card');
+      card.innerHTML =
+        '<span class="db-eyebrow">Your Skill Map</span>' +
+        '<p class="db-skillmap-sub">Your map grows as you practice across Flow School tools.</p>' +
+        '<svg viewBox="0 0 320 260" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible">' +
+          axisSVG + gridSVG + dataSVG + dotsSVG + labelsSVG +
+        '</svg>' +
+        '';
+    }
+
+    function renderSaved() {
+      var container = document.getElementById('db-saved-list');
+      var items = [];
+      try {
+        var playlists = JSON.parse(localStorage.getItem('flowschool_playlists') || '[]');
+        playlists.forEach(function (p) {
+          items.push({ icon: 'queue_music', name: p.title || 'Untitled Playlist', sub: 'Playlist Builder', href: 'playlist-builder.html', time: p.savedAt ? new Date(p.savedAt).getTime() : 0 });
+        });
+      } catch (_) {}
+      try {
+        var rules = JSON.parse(localStorage.getItem('flowschool_arules') || '[]');
+        rules.forEach(function (r) {
+          items.push({ icon: 'casino', name: 'Saved Challenge', sub: 'Arbitrary Rules', href: 'arbitrary-rule-generator.html', time: r.id || 0 });
+        });
+      } catch (_) {}
+      try {
+        var favs = JSON.parse(localStorage.getItem('flowschool_favs') || '[]');
+        favs.forEach(function (id) {
+          items.push({ icon: 'experiment', name: 'Movement Experiment', sub: 'Movement Experiments', href: 'movement-experiment-generator.html', time: 0 });
+        });
+      } catch (_) {}
 
 
-<script src="lib/nav.js"></script>
+      items.sort(function (a, b) { return b.time - a.time; });
+      items = items.slice(0, 8);
+
+      if (!items.length) {
+        container.innerHTML = '<p class="db-saved-empty">Nothing saved yet. Bookmark items as you practice&#8212;they&#8217;ll appear here.</p>';
+        return;
+      }
+      container.innerHTML = items.map(function (item) {
+        return '<a href="' + item.href + '" class="db-saved-item">' +
+          '<div class="db-saved-icon"><span class="material-symbols-sharp">' + item.icon + '</span></div>' +
+          '<div class="db-saved-info">' +
+            '<span class="db-saved-name">' + item.name + '</span>' +
+            '<span class="db-saved-sub">' + item.sub + '</span>' +
+          '</div>' +
+        '</a>';
+      }).join('');
+    }
+
+    function renderEvents() {
+      var MO = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var today = new Date();
+      var el    = document.getElementById('db-events-list');
+      var upcoming = EVENTS.filter(function (e) { return e.date >= today; });
+      el.innerHTML = upcoming.map(function (e) {
+        return '<div class="db-event">' +
+          '<div class="db-event-date">' +
+            '<span class="db-event-mo">' + MO[e.date.getMonth()] + '</span>' +
+            '<span class="db-event-day">' + e.date.getDate() + '</span>' +
+          '</div>' +
+          '<div style="flex:1;min-width:0">' +
+            '<p class="db-event-title">' + e.title + '</p>' +
+            '<div class="db-event-foot">' +
+              '<span class="db-event-type">' + e.type + '</span>' +
+              (e.time ? '<span class="db-event-time">' + e.time + '</span>' : '') +
+            '</div>' +
+          '</div>' +
+          '<button class="btn-ghost sm db-event-signup" disabled style="flex-shrink:0;opacity:.55;cursor:default">Sign up</button>' +
+        '</div>';
+      }).join('');
+    }
+
+    function renderCommunity() {
+      var el = document.getElementById('db-community-list');
+      el.innerHTML = COMMUNITY.map(function (c) {
+        return '<div class="db-feed-item">' +
+          '<div class="db-feed-avatar' + (c.isBonnie ? ' bonnie' : '') + '">' + c.avatar + '</div>' +
+          '<div class="db-feed-text">' +
+            '<span class="db-feed-name">' + c.name + '</span> ' + c.action +
+          '</div>' +
+          '<span class="db-feed-time">' + c.time + '</span>' +
+        '</div>';
+      }).join('');
+    }
+
+
+
+    function initSidebar() {
+      var sidebar = document.getElementById('app-sidebar');
+      var toggle  = document.getElementById('sidebar-toggle');
+      var overlay = document.getElementById('sidebar-overlay');
+      if (toggle)  toggle.addEventListener('click',  function () { sidebar.classList.toggle('open'); overlay.classList.toggle('show'); });
+      if (overlay) overlay.addEventListener('click', function () { sidebar.classList.remove('open'); overlay.classList.remove('show'); });
+      document.querySelectorAll('.nav-section-toggle').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var expanded = btn.getAttribute('aria-expanded') === 'true';
+          btn.setAttribute('aria-expanded', String(!expanded));
+          btn.nextElementSibling.style.display = expanded ? 'none' : '';
+        });
+      });
+    }
+
+    // ── Init ────────────────────────────────────────────────────────
+    function init() {
+      seedDemoData();
+      var stats = loadStats();
+      initSidebar();
+      renderWelcome(stats);
+      renderPrompt();
+      renderContinue();
+      renderNextStep();
+      renderProgress(stats);
+      renderSkillMap();
+      renderSaved();
+      renderEvents();
+      renderCommunity();
+    }
+
+    init();
+
+  })();
+  </script>
 </body>
 </html>

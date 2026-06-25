@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flow Checker — Flow School</title>
+  <link rel="stylesheet" href="global.css">
+  <style>
+    /* ── Flow Checker — page-specific ─────────────────────────────── */
+
+    /* Two-column grid */
+    .fc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+      padding-bottom: 80px;
+    }
+
+    .fc-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Section cards */
+    .fc-section {
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      background: rgba(255,255,255,.018);
+      padding: 24px;
+    }
+
+    .fc-section-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .fc-section-title {
+      font-size: var(--text-ui);
+      font-weight: var(--weight-medium);
+      color: var(--text-2);
+      margin: 4px 0 0;
+      line-height: 1.35;
+    }
+
+    /* Counter */
+    .fc-counter {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .fc-count {
+      font-size: 1.5rem;
+      font-weight: var(--weight-semibold);
+      color: var(--accent);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      transition: color 0.25s;
+    }
+
+    .fc-denom {
+      font-size: var(--text-small);
+      color: var(--text-3);
+    }
+
+    /* Progress bar */
+    .fc-progress {
+      height: 2px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .fc-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      width: 0%;
+      transition: width .3s ease;
+    }
+
+    /* Complete callout */
+    .fc-complete {
+      padding: 11px 14px;
+      border: 1px solid var(--accent-border);
+      border-radius: 8px;
+      background: var(--accent-dim);
+      margin-bottom: 14px;
+      display: none;
+      animation: fadeUp .22s ease both;
+    }
+
+    .fc-complete p {
+      font-size: var(--text-small);
+      color: rgba(221,227,106,.85);
+      margin: 0;
+    }
+
+    /* Checklist */
+    .fc-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fc-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border-light);
+      cursor: pointer;
+      transition: opacity .15s;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .fc-item:first-child { padding-top: 0; }
+    .fc-item:last-child  { border-bottom: none; padding-bottom: 0; }
+    .fc-item:hover       { opacity: .72; }
+    .fc-item.checked     { opacity: .4; }
+
+    .fc-box {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid rgba(255,255,255,.18);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s;
+    }
+
+    .fc-item.checked .fc-box {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .fc-icon {
+      font-size: 12px;
+      color: #080808;
+      opacity: 0;
+      transition: opacity .15s;
+      font-weight: 700;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .fc-item.checked .fc-icon { opacity: 1; }
+
+    .fc-label {
+      font-size: var(--text-ui);
+      font-weight: var(--weight-medium);
+      color: var(--text-1);
+      display: block;
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+
+    .fc-sub {
+      font-size: var(--text-small);
+      color: var(--text-3);
+      font-family: var(--font-mono);
+      line-height: 1.4;
+      display: block;
+    }
+
+    /* Divider inside Big Five */
+    .fc-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0 4px;
+      font-size: var(--text-small);
+      color: var(--text-3);
+      letter-spacing: 0.05em;
+      pointer-events: none;
+    }
+
+    .fc-divider::before,
+    .fc-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+    }
+
+    @media (max-width: 720px) {
+      .fc-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <header class="hdr">
+    <div class="hdr-i">
+      <a href="index.html" class="btn-ghost">← Tools</a>
+      <div class="hdr-logo-wrap">
+        <a href="index.html" class="hdr-logo">Flow School</a>
+        <span class="beta-tag">Beta</span>
+      </div>
+      <div class="hdr-auth" id="hdr-auth"></div>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+
+      <div class="hero">
+        <span class="page-eyebrow">Flow Design</span>
+        <h2>Flow Checker</h2>
+        <p style="margin-top:10px;color:var(--text-2);font-size:var(--text-body-lg)">
+          Work through your Peak Flow and check off every element.
+        </p>
+        <p style="margin-top:10px">
+          Use this while planning or reviewing a class to make sure nothing is missing. A complete Peak Flow covers all body positions, all three movement planes, natural gait alternation, and each of the Big Five elements.
+        </p>
+        <button class="btn-ghost" id="fc-reset-all" style="font-size:var(--text-small);padding:8px 14px;margin-top:20px">New Flow</button>
+      </div>
+
+      <div class="fc-grid">
+
+        <!-- Left: Body Positions (longest section) -->
+        <div class="fc-col">
+          <div class="fc-section">
+            <div class="fc-section-head">
+              <div>
+                <span class="card-eyebrow">Body Positions</span>
+                <h2 class="fc-section-title">Check off each position your flow includes.<br>One pose can cover multiple positions at once.</h2>
+              </div>
+              <div class="fc-counter">
+                <span class="fc-count" id="bp-count">0</span>
+                <span class="fc-denom">/ 13</span>
+              </div>
+            </div>
+            <div class="fc-progress"><div class="fc-progress-fill" id="bp-fill"></div></div>
+            <div class="fc-complete" id="bp-complete"><p>Every body position is covered.</p></div>
+            <div class="fc-list" id="bp-list"></div>
+          </div>
+        </div>
+
+        <!-- Right: Planes + Gait + Big Five -->
+        <div class="fc-col">
+
+          <!-- Movement Planes -->
+          <div class="fc-section">
+            <div class="fc-section-head">
+              <div>
+                <span class="card-eyebrow">Movement Planes</span>
+                <h2 class="fc-section-title">Does your flow move in all three planes?</h2>
+              </div>
+              <div class="fc-counter">
+                <span class="fc-count" id="plane-count">0</span>
+                <span class="fc-denom">/ 3</span>
+              </div>
+            </div>
+            <div class="fc-progress"><div class="fc-progress-fill" id="plane-fill"></div></div>
+            <div class="fc-complete" id="plane-complete"><p>All three planes covered.</p></div>
+            <div class="fc-list" id="plane-list"></div>
+          </div>
+
+          <!-- Gait -->
+          <div class="fc-section">
+            <div class="fc-section-head">
+              <div>
+                <span class="card-eyebrow">Gait</span>
+                <h2 class="fc-section-title">Does your flow alternate naturally — like a yoga dance?</h2>
+              </div>
+              <div class="fc-counter">
+                <span class="fc-count" id="gait-count">0</span>
+                <span class="fc-denom">/ 6</span>
+              </div>
+            </div>
+            <div class="fc-progress"><div class="fc-progress-fill" id="gait-fill"></div></div>
+            <div class="fc-complete" id="gait-complete"><p>Strong alternation throughout.</p></div>
+            <div class="fc-list" id="gait-list"></div>
+          </div>
+
+          <!-- Big Five -->
+          <div class="fc-section">
+            <div class="fc-section-head">
+              <div>
+                <span class="card-eyebrow">The Big Five</span>
+                <h2 class="fc-section-title">Does your flow address each element?</h2>
+              </div>
+              <div class="fc-counter">
+                <span class="fc-count" id="big5-count">0</span>
+                <span class="fc-denom">/ 8</span>
+              </div>
+            </div>
+            <div class="fc-progress"><div class="fc-progress-fill" id="big5-fill"></div></div>
+            <div class="fc-complete" id="big5-complete"><p>All elements addressed.</p></div>
+            <div class="fc-list" id="big5-list"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    (function () {
+
+      // ── Data ──────────────────────────────────────────────────────────
+
+      var BODY_POSITIONS = [
+        { id: 'single-leg',   label: 'Single Leg',                     sub: 'e.g. Tree · Warrior 3 · Revolved Half Moon' },
+        { id: 'double-same',  label: 'Double Leg, Same Direction',      sub: 'e.g. Chair · Tadasana · Wide Leg Forward Fold' },
+        { id: 'diff-dir',     label: 'Double Leg, Different Direction', sub: 'e.g. Skandasana · Triangle · Warrior 2' },
+        { id: 'squat',        label: 'Squat / Bent Leg',               sub: 'e.g. Chair · Skandasana · Lunge' },
+        { id: 'hinge',        label: 'Hinge / Fold / Spine Flexion',   sub: 'e.g. Pyramid · Forward Fold · Triangle' },
+        { id: 'straight-leg', label: 'Straight Leg',                   sub: 'e.g. Tadasana · Half Moon · Low Boat' },
+        { id: 'square-hip',   label: 'Square Hip / Neutral Hip',       sub: 'e.g. Crescent Lunge · Camel · Chair' },
+        { id: 'open-hip',     label: 'Open Hip / External Rotation',   sub: 'e.g. Half Moon · Warrior 2 · Extended Side Angle' },
+        { id: 'twist',        label: 'Twist',                          sub: 'e.g. Revolved Chair · Dancing Anjaneyasana' },
+        { id: 'lean',         label: 'Lean',                           sub: 'e.g. Wild Thing · Runner\'s Lean · Reverse Triangle' },
+        { id: 'single-arm',   label: 'Single Arm',                     sub: 'e.g. Side Plank · Funky Side Plank · Gate' },
+        { id: 'double-arm',   label: 'Double Arm',                     sub: 'e.g. Down Dog · Crow · Chaturanga · Handstand' },
+        { id: 'backbend',     label: 'Spine Extension / Backbend',     sub: 'e.g. Bridge · Wild Thing · Up Dog' },
+      ];
+
+      var PLANES = [
+        { id: 'sagittal',   label: 'Sagittal',   sub: 'Forward + Back · Up + Down' },
+        { id: 'frontal',    label: 'Frontal',     sub: 'Side to Side' },
+        { id: 'transverse', label: 'Transverse',  sub: 'Twist / Rotation' },
+      ];
+
+      var GAIT = [
+        { id: 'bent-straight', label: 'Bent → Straight',          sub: 'Do both legs alternate between bent and straight?' },
+        { id: 'square-open',   label: 'Square Hip → Open Hip',    sub: 'Do your hips rotate between square and open?' },
+        { id: 'arms-ud',       label: 'Arms Up → Arms Down',      sub: 'Do your arms move in multiple directions, not just up?' },
+        { id: 'twist-lr',      label: 'Twist Left → Twist Right', sub: 'Does your flow twist in both directions?' },
+        { id: 'back-fwd',      label: 'Backbend → Forward Fold',  sub: 'Does your spine both extend and flex?' },
+        { id: 'fwd-bwd',       label: 'Forward → Backward',       sub: 'Does your flow move both forward and backward on the mat?' },
+      ];
+
+      var BIG_FIVE = [
+        { id: 'mobility',     label: 'Mobility',     sub: 'Joint control and strength in range of motion' },
+        { id: 'stability',    label: 'Stability',    sub: 'Ability to control movement' },
+        { id: 'strength',     label: 'Strength',     sub: 'Power, endurance, and exertion of effort' },
+        { id: 'conditioning', label: 'Conditioning', sub: 'Rhythmic movement of the heart and lungs' },
+        { id: 'flow',         label: 'Flow',         sub: 'Transitions and postures sequenced across planes' },
+        { id: '_divider',     label: 'Supporting' },
+        { id: 'flexibility',  label: 'Flexibility',  sub: 'Joint and muscle control in passive range' },
+        { id: 'breath',       label: 'Breath',       sub: 'The rhythm that helps movement become embodied' },
+        { id: 'rest',         label: 'Rest',         sub: 'Stillness, integration, nervous system reset' },
+      ];
+
+      // ── Storage ───────────────────────────────────────────────────────
+
+      var KEYS = {
+        bp:    'flowschool_fc_positions',
+        plane: 'flowschool_fc_planes',
+        gait:  'flowschool_fc_gait',
+        big5:  'flowschool_fc_big5',
+      };
+
+      var TOTALS = { bp: 13, plane: 3, gait: 6, big5: 8 };
+
+      // ── State ─────────────────────────────────────────────────────────
+
+      var state = { bp: new Set(), plane: new Set(), gait: new Set(), big5: new Set() };
+
+      Object.keys(KEYS).forEach(function (key) {
+        try {
+          JSON.parse(localStorage.getItem(KEYS[key]) || '[]').forEach(function (id) {
+            state[key].add(id);
+          });
+        } catch (_) {}
+      });
+
+      // ── Update counter / bar / complete ───────────────────────────────
+
+      function updateCounter(key) {
+        var n   = state[key].size;
+        var tot = TOTALS[key];
+        document.getElementById(key + '-count').textContent    = n;
+        document.getElementById(key + '-fill').style.width     = (n / tot * 100) + '%';
+        document.getElementById(key + '-complete').style.display = (n === tot) ? '' : 'none';
+        try { localStorage.setItem(KEYS[key], JSON.stringify(Array.from(state[key]))); } catch (_) {}
+      }
+
+      // ── Render a list ─────────────────────────────────────────────────
+
+      function renderList(containerId, items, key) {
+        var container = document.getElementById(containerId);
+        var html = '';
+
+        items.forEach(function (item) {
+          if (item.id === '_divider') {
+            html += '<div class="fc-divider">' + item.label + '</div>';
+            return;
+          }
+          var checked = state[key].has(item.id);
+          html +=
+            '<div class="fc-item' + (checked ? ' checked' : '') + '" ' +
+            'data-key="' + key + '" data-id="' + item.id + '" ' +
+            'tabindex="0" role="checkbox" aria-checked="' + checked + '">' +
+            '<div class="fc-box"><span class="fc-icon material-symbols-sharp">check</span></div>' +
+            '<div>' +
+            '<span class="fc-label">' + item.label + '</span>' +
+            (item.sub ? '<span class="fc-sub">' + item.sub + '</span>' : '') +
+            '</div>' +
+            '</div>';
+        });
+
+        container.innerHTML = html;
+
+        container.querySelectorAll('.fc-item').forEach(function (el) {
+          function toggle() {
+            var id  = el.getAttribute('data-id');
+            var key = el.getAttribute('data-key');
+            if (state[key].has(id)) {
+              state[key].delete(id);
+              el.classList.remove('checked');
+              el.setAttribute('aria-checked', 'false');
+            } else {
+              state[key].add(id);
+              el.classList.add('checked');
+              el.setAttribute('aria-checked', 'true');
+            }
+            updateCounter(key);
+          }
+          el.addEventListener('click', toggle);
+          el.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+          });
+        });
+
+        updateCounter(key);
+      }
+
+      // ── Init ──────────────────────────────────────────────────────────
+
+      renderList('bp-list',    BODY_POSITIONS, 'bp');
+      renderList('plane-list', PLANES,         'plane');
+      renderList('gait-list',  GAIT,           'gait');
+      renderList('big5-list',  BIG_FIVE,       'big5');
+
+      // ── Global reset ──────────────────────────────────────────────────
+
+      document.getElementById('fc-reset-all').addEventListener('click', function () {
+        Object.keys(state).forEach(function (key) { state[key].clear(); });
+        document.querySelectorAll('.fc-item').forEach(function (el) {
+          el.classList.remove('checked');
+          el.setAttribute('aria-checked', 'false');
+        });
+        Object.keys(TOTALS).forEach(function (key) { updateCounter(key); });
+      });
+
+      // ── Recent tools ──────────────────────────────────────────────────
+
+      try {
+        var RECENT_KEY = 'flowschool_recent';
+        var recent = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+        recent = recent.filter(function (r) { return r.href !== 'flow-checker.html'; });
+        recent.unshift({ name: 'Flow Checker', icon: 'checklist', href: 'flow-checker.html', time: Date.now() });
+        if (recent.length > 8) recent = recent.slice(0, 8);
+        localStorage.setItem(RECENT_KEY, JSON.stringify(recent));
+      } catch (_) {}
+
+    })();
+  </script>
+
+  <script src="lib/nav.js"></script>
+
+</body>
+
+</html>

@@ -257,7 +257,7 @@
   <header class="hdr">
     <div class="hdr-i">
       <a href="index.html" class="btn-ghost">← Tools</a>
-      <a href="index.html" class="hdr-logo">Flow School</a>
+      <div class="hdr-logo-wrap"><a href="index.html" class="hdr-logo">Flow School</a><span class="beta-tag">Beta</span></div>
       <div class="hdr-auth" id="hdr-auth"></div>
     </div>
   </header>
@@ -298,8 +298,8 @@
         <div class="exp-tags" id="exp-tags"></div>
         <div class="exp-title-row">
           <h4 class="exp-title" id="exp-title"></h4>
-          <button class="btn-icon" id="save-btn" title="Save experiment">
-            <span class="material-symbols-sharp save-icon">bookmark_border</span>
+          <button class="btn-icon" id="save-btn" title="Save experiment" data-tooltip="Save">
+            <span class="material-symbols-sharp save-icon">bookmark</span>
           </button>
         </div>
       </div>
@@ -1164,7 +1164,7 @@
       const saved = favorites.includes(id);
       btn.classList.toggle('saved', saved);
       btn.title = saved ? 'Saved' : 'Save experiment';
-      btn.querySelector('.save-icon').textContent = saved ? 'bookmark' : 'bookmark_border';
+      btn.querySelector('.save-icon').textContent = 'bookmark';
     }
 
     // ─── FAVORITES ───────────────────────────────────────────────────────────────
@@ -1252,6 +1252,7 @@
     generate();
   </script>
   <script src="lib/nav.js"></script>
+  <script src="lib/tracker.js"></script>
 
 </body>
 
