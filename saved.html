@@ -247,6 +247,22 @@
           } catch (_) { return []; }
         },
       },
+      {
+        key: 'pose-connector',
+        label: 'Pose Popcorn Chains',
+        icon: 'conversion_path',
+        load: function () {
+          try {
+            return JSON.parse(localStorage.getItem('fs-pose-connector-saved') || '[]').map(function (c) {
+              return {
+                name: c.name || 'Untitled Chain',
+                href: 'pose-popcorn.html?chain=' + (c.savedAt || ''),
+                time: c.savedAt || 0,
+              };
+            });
+          } catch (_) { return []; }
+        },
+      },
     ];
 
     function renderSection(s, items) {

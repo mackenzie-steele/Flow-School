@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <script>!function(){var t=localStorage.getItem("fs-theme");document.documentElement.setAttribute("data-theme",t||"light")}()</script>
+  <link rel="icon" href="img/flow-school-favicon.png" type="image/png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pose Popcorn</title>
+  <link rel="stylesheet" href="global.css">
+  <style>
+
+    /* ── Deck row ── */
+    .deck-row {
+      display: grid;
+      grid-template-columns: 1fr 64px 1fr;
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: 28px;
+    }
+
+    /* ── Pose cards ── */
+    .pose-card {
+      padding: 36px 40px 40px;
+      display: flex;
+      flex-direction: column;
+      min-height: 200px;
+      position: relative;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .pose-card-eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--text-label);
+      text-transform: uppercase;
+      letter-spacing: var(--ls-micro);
+      color: var(--text-3);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .eyebrow-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-3);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    .pose-name {
+      font-size: var(--fs-h4);
+      font-weight: var(--weight-regular);
+      letter-spacing: -.01em;
+      line-height: var(--lh-heading);
+      color: var(--text-1);
+    }
+
+    .dest-card {
+      border-color: rgba(var(--ink-rgb), .18);
+      border-top-color: rgba(var(--ink-rgb), .30);
+      background: rgba(var(--ink-rgb), .035);
+    }
+
+    /* ── Connector ── */
+    .deck-connector {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-3);
+      flex-shrink: 0;
+    }
+
+    .deck-connector svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* ── Action buttons ── */
+    .deck-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .deck-actions { justify-content: flex-end; }
+    .deck-actions .btn-primary { border-radius: 8px; }
+
+    /* ── Chain section ── */
+    .chain-section {
+      margin-top: 56px;
+    }
+
+    .chain-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .chain-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chain-title {
+      font-size: var(--fs-body);
+      font-weight: var(--weight-medium);
+      color: var(--text-1);
+    }
+
+    .chain-title-input {
+      font-family: var(--font);
+      font-size: var(--fs-body);
+      font-weight: var(--weight-medium);
+      color: var(--text-1);
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(var(--ink-rgb), .30);
+      outline: none;
+      padding: 0;
+      min-width: 40px;
+      width: auto;
+    }
+
+    .chain-title-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-3);
+      padding: 0;
+      display: flex;
+      align-items: center;
+      transition: color .15s;
+      flex-shrink: 0;
+    }
+
+    .chain-title-btn:hover { color: var(--text-1); }
+    .chain-title-btn .material-symbols-sharp { font-size: 18px; }
+
+    .chain-count {
+      font-family: var(--font-mono);
+      font-size: var(--text-label);
+      color: var(--text-3);
+    }
+
+    .chain-item {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .chain-item:last-child { border-bottom: none; }
+
+    .chain-poses {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      flex-wrap: wrap;
+      padding-top: 9px;
+    }
+
+    .chain-num {
+      font-family: var(--font-mono);
+      font-size: var(--text-small);
+      color: var(--text-3);
+      min-width: 22px;
+      flex-shrink: 0;
+    }
+
+    .chain-pose-name {
+      font-size: var(--fs-h7);
+      font-weight: var(--weight-medium);
+      color: var(--text-1);
+    }
+
+    .chain-sep {
+      color: var(--text-3);
+      font-size: 13px;
+    }
+
+    .chain-note-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .chain-note-text {
+      flex: 1;
+      font-size: var(--text-small);
+      line-height: 1.5;
+      color: var(--text-2);
+      padding: 8px 12px;
+      border: 1px solid transparent;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      min-width: 0;
+      cursor: pointer;
+    }
+
+    .chain-note-text.empty {
+      color: var(--text-3);
+      font-style: italic;
+    }
+
+    .chain-note-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-3);
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      transition: color .15s;
+    }
+
+    .chain-note-btn:hover { color: var(--text-1); }
+    .chain-note-btn .material-symbols-sharp { font-size: 16px; }
+
+    .chain-note-input {
+      flex: 1;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid var(--border);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: var(--text-small);
+      line-height: 1.5;
+      resize: none;
+      outline: none;
+      overflow: hidden;
+      transition: border-color .15s, background .15s;
+    }
+
+    .chain-note-input::placeholder { color: var(--text-3); font-style: italic; }
+    .chain-note-input:focus {
+      border-color: rgba(var(--ink-rgb), .35);
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    [data-theme="dark"] .chain-note-input { background: rgba(0, 0, 0, 0.25); }
+    [data-theme="dark"] .chain-note-input:focus { background: rgba(0, 0, 0, 0.35); }
+
+    .chain-empty {
+      padding: 48px 0;
+      text-align: center;
+      color: var(--text-3);
+      font-size: var(--text-body-sm);
+    }
+
+    /* ── Save modal ── */
+    .pc-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(245, 244, 240, .65);
+      backdrop-filter: blur(14px) saturate(120%);
+      -webkit-backdrop-filter: blur(14px) saturate(120%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 400;
+    }
+
+    [data-theme="dark"] .pc-modal-backdrop {
+      background: rgba(27, 27, 27, .75);
+    }
+
+    .pc-modal-backdrop[hidden] { display: none; }
+
+    .pc-modal-card {
+      background: var(--paper-solid);
+      border: 1px solid rgba(var(--ink-rgb), .16);
+      border-top-color: rgba(var(--ink-rgb), .30);
+      box-shadow: 0 4px 32px rgba(var(--ink-rgb), .12), 0 20px 60px rgba(var(--ink-rgb), .08);
+      padding: 32px;
+      width: min(400px, calc(100vw - 40px));
+      display: flex;
+      flex-direction: column;
+    }
+
+    [data-theme="dark"] .pc-modal-card {
+      box-shadow: 0 4px 32px rgba(0, 0, 0, .5), 0 20px 60px rgba(0, 0, 0, .4);
+    }
+
+    .pc-modal-card h3 { margin: 0 0 6px; font-size: var(--fs-h6); font-weight: var(--weight-medium); color: var(--text-1); }
+    .pc-modal-hint    { font-size: var(--fs-body); color: var(--text-3); margin: 0 0 20px; }
+
+    .pc-modal-input {
+      width: 100%;
+      background: rgba(var(--ink-rgb), .04);
+      border: 1px solid rgba(var(--ink-rgb), .14);
+      color: var(--text-1);
+      font-family: var(--font);
+      font-size: var(--fs-h7);
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color .18s, background .18s;
+    }
+
+    .pc-modal-input::placeholder { color: rgba(var(--ink-rgb), .28); }
+    .pc-modal-input:focus {
+      border-color: rgba(var(--ink-rgb), .38);
+      background: rgba(var(--ink-rgb), .06);
+    }
+
+    .pc-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .pc-modal-input.error { border-color: #e05252; }
+    @keyframes pc-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+    .pc-modal-input.shake { animation: pc-shake .3s ease; }
+
+    /* ── Summary overlay ── */
+    .summary-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(var(--ink-rgb), .5);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      backdrop-filter: blur(4px);
+    }
+
+    .summary-overlay.show { display: flex; }
+
+    .summary-panel {
+      background: var(--bg);
+      border: 1px solid rgba(var(--ink-rgb), .22);
+      border-top-color: rgba(var(--ink-rgb), .35);
+      max-width: 520px;
+      width: 100%;
+      max-height: 82vh;
+      overflow-y: auto;
+      padding: 48px;
+    }
+
+    .summary-chain {
+      margin: 20px 0 28px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .summary-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border-light);
+      font-size: var(--text-body-sm);
+    }
+
+    .summary-link:last-child { border-bottom: none; }
+
+    .summary-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .deck-row {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+
+      .deck-connector {
+        border: none;
+        padding: 16px 0;
+        transform: rotate(90deg);
+      }
+
+      .dest-card {
+        border-left: 1px solid rgba(var(--ink-rgb), .18);
+      }
+
+      .pose-name { font-size: 1.75rem; }
+
+      .summary-panel { padding: 32px 24px; }
+
+      .chain-focus { display: none; }
+    }
+
+  </style>
+</head>
+
+<body class="has-sidebar">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <main class="wrap">
+
+    <!-- Hero -->
+    <section class="hero">
+      <p class="label-1">Cue Lab</p>
+      <h3>Pose Popcorn</h3>
+      <p>Start with a pose. Connect it to the next one. Practice the art of cueing transitions one link at a time.</p>
+    </section>
+
+    <!-- Main deck -->
+    <div class="deck-row" id="deck-row">
+
+      <!-- Starting Pose -->
+      <div class="card pose-card" id="start-card">
+        <div class="pose-card-eyebrow">
+          <span class="eyebrow-dot"></span>
+          Starting Pose
+        </div>
+        <div class="pose-name" id="start-pose-name">—</div>
+      </div>
+
+      <!-- Connector arrow -->
+      <div class="deck-connector">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="2" y1="16" x2="26" y2="16" stroke="currentColor" stroke-width="1.5"/>
+          <polyline points="20,10 28,16 20,22" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linejoin="miter"/>
+        </svg>
+      </div>
+
+      <!-- Destination Pose -->
+      <div class="card pose-card dest-card" id="dest-card">
+        <div class="pose-card-eyebrow">
+          <span class="eyebrow-dot"></span>
+          Destination Pose
+        </div>
+        <div class="pose-name" id="dest-pose-name">—</div>
+      </div>
+
+    </div>
+
+    <!-- Action buttons -->
+    <div class="deck-actions">
+      <button class="btn-primary" id="next-pose-btn">
+        Next Pose
+        <span class="material-symbols-sharp">arrow_forward</span>
+      </button>
+    </div>
+
+    <!-- Chain history -->
+    <div class="chain-section">
+      <div class="chain-header">
+        <div>
+          <div class="chain-title-wrap" id="chain-title-wrap">
+            <span class="chain-title" id="chain-title">Chain</span>
+            <button class="chain-title-btn" id="chain-title-edit-btn" title="Rename chain" style="display:none">
+              <span class="material-symbols-sharp">edit</span>
+            </button>
+          </div>
+          <span class="chain-count" id="chain-count">0 connections</span>
+        </div>
+        <button class="btn-icon" id="save-btn" data-tooltip="Save chain">
+          <span class="material-symbols-sharp save-icon">bookmark</span>
+        </button>
+      </div>
+      <div id="chain-list"></div>
+    </div>
+
+  </main>
+
+  <!-- Save chain modal -->
+  <div class="pc-modal-backdrop" id="pc-modal" hidden>
+    <div class="pc-modal-card">
+      <h3>Name your chain</h3>
+      <p class="pc-modal-hint">Give it a name so you can find it later.</p>
+      <input type="text" class="pc-modal-input" id="pc-name-input" placeholder="Chain name" maxlength="80" autocomplete="off">
+      <div class="pc-modal-actions">
+        <button class="btn-ghost" id="pc-modal-cancel">Cancel</button>
+        <button class="btn-primary" id="pc-modal-confirm">Save chain</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary overlay -->
+  <div class="summary-overlay" id="summary-overlay">
+    <div class="summary-panel">
+      <span class="page-eyebrow">Practice Complete</span>
+      <h4 id="summary-heading">—</h4>
+      <p id="summary-stats" style="margin-top:6px;font-size:var(--text-body-sm);"></p>
+      <div class="summary-chain" id="summary-chain"></div>
+      <div class="summary-actions">
+        <button class="btn-primary" id="summary-copy-btn">
+          <span class="material-symbols-sharp">content_copy</span>
+          Copy Chain
+        </button>
+        <button class="btn-secondary" id="summary-new-btn">Start New Chain</button>
+        <button class="btn-ghost" id="summary-close-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/nav.js"></script>
+  <script src="lib/tracker.js"></script>
+  <script src="data/poses.js"></script>
+  <script>
+
+    // ─── STATE ────────────────────────────────────────────────────
+    var startPose = null;
+    var destPose  = null;
+    var chain     = [];
+    var chainName = null;
+    var chainSavedAt = null;
+    var LS_KEY       = 'fs-pose-connector-chain';
+
+    // ─── UTILS ───────────────────────────────────────────────────
+    function pickPose(excludeName) {
+      var pool = POSES.filter(function(p) { return p !== excludeName; });
+      return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    function escHtml(str) {
+      return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    // ─── RENDER ──────────────────────────────────────────────────
+    function renderDeck() {
+      document.getElementById('start-pose-name').textContent = startPose || '—';
+      document.getElementById('dest-pose-name').textContent  = destPose  || '—';
+    }
+
+    function renderChain() {
+      var list    = document.getElementById('chain-list');
+      var countEl = document.getElementById('chain-count');
+      countEl.textContent = chain.length + ' connection' + (chain.length !== 1 ? 's' : '');
+
+      if (!chain.length) {
+        list.innerHTML = '<div class="chain-empty">Your transition chain will appear here.</div>';
+        return;
+      }
+
+      list.innerHTML = chain.map(function(item, i) {
+        return '<div class="chain-item">'
+          + '<div class="chain-poses">'
+          + '<span class="chain-num">' + (i + 1) + '.</span>'
+          + '<span class="chain-pose-name">' + escHtml(item.start) + '</span>'
+          + '<span class="chain-sep">→</span>'
+          + '<span class="chain-pose-name">' + escHtml(item.dest) + '</span>'
+          + '</div>'
+          + '<div class="chain-note-wrap" data-idx="' + i + '">'
+          + noteDisplayHTML(i, item.note || '')
+          + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function saveToStorage() {
+      try { localStorage.setItem(LS_KEY, JSON.stringify(chain)); } catch(e) {}
+    }
+
+
+    // ─── ACTIONS ─────────────────────────────────────────────────
+    function pushToChain() {
+      chain.push({ start: startPose, dest: destPose, note: '' });
+      saveToStorage();
+      renderChain();
+    }
+
+    function nextPose() {
+      animateTransition(function() {
+        startPose = destPose;
+        destPose  = pickPose(startPose);
+        pushToChain();
+        renderDeck();
+        document.getElementById('save-btn').classList.remove('saved');
+        if (chainName) {
+          chainName    = null;
+          chainSavedAt = null;
+          setChainTitle('Chain');
+        }
+      });
+    }
+
+    function openSaveModal() {
+      if (!chain.length) return;
+      var input = document.getElementById('pc-name-input');
+      input.value = '';
+      document.getElementById('pc-modal').removeAttribute('hidden');
+      requestAnimationFrame(function() { input.focus(); });
+    }
+
+    function closeSaveModal() {
+      document.getElementById('pc-modal').setAttribute('hidden', '');
+    }
+
+    function confirmSaveChain() {
+      var input = document.getElementById('pc-name-input');
+      var name = input.value.trim();
+      if (!name) {
+        input.classList.remove('shake');
+        input.classList.add('error');
+        void input.offsetWidth;
+        input.classList.add('shake');
+        input.focus();
+        return;
+      }
+      input.classList.remove('error', 'shake');
+      closeSaveModal();
+      var LS_SAVED = 'fs-pose-connector-saved';
+      var savedAt = Date.now();
+      try {
+        var existing = JSON.parse(localStorage.getItem(LS_SAVED) || '[]');
+        existing.push({ name: name, savedAt: savedAt, transitions: JSON.parse(JSON.stringify(chain)) });
+        localStorage.setItem(LS_SAVED, JSON.stringify(existing));
+      } catch(e) {}
+      chainName    = name;
+      chainSavedAt = savedAt;
+      setChainTitle(name);
+      document.getElementById('save-btn').classList.add('saved');
+    }
+
+    // ─── TRANSITION ANIMATION ────────────────────────────────────
+    function animateTransition(callback) {
+      var startCard = document.getElementById('start-card');
+      var destCard  = document.getElementById('dest-card');
+
+      startCard.style.transition = 'opacity 0.18s ease, transform 0.18s ease';
+      destCard.style.transition  = 'opacity 0.18s ease, transform 0.18s ease';
+      startCard.style.opacity    = '0';
+      startCard.style.transform  = 'translateX(-18px)';
+      destCard.style.opacity     = '0.35';
+      destCard.style.transform   = 'translateX(-10px)';
+
+      setTimeout(function() {
+        callback();
+        startCard.style.opacity  = '';
+        startCard.style.transform = '';
+        destCard.style.opacity   = '0';
+        destCard.style.transform = 'translateX(18px)';
+        setTimeout(function() {
+          destCard.style.opacity   = '';
+          destCard.style.transform = '';
+          setTimeout(function() {
+            startCard.style.transition = '';
+            destCard.style.transition  = '';
+          }, 200);
+        }, 20);
+      }, 200);
+    }
+
+    // ─── SUMMARY ─────────────────────────────────────────────────
+    function showSummary() {
+      var overlay = document.getElementById('summary-overlay');
+      overlay.classList.add('show');
+
+      var total = chain.length;
+
+      document.getElementById('summary-heading').textContent =
+        total + ' transition' + (total !== 1 ? 's' : '') + ' practiced';
+      document.getElementById('summary-stats').textContent = '';
+
+      document.getElementById('summary-chain').innerHTML = chain.map(function(item, i) {
+        return '<div class="summary-link">'
+          + '<span class="chain-num">' + (i + 1) + '.</span>'
+          + '<strong>' + escHtml(item.start) + '</strong>'
+          + '<span style="color:var(--text-3)">→</span>'
+          + '<strong>' + escHtml(item.dest) + '</strong>'
+          + '</div>';
+      }).join('');
+    }
+
+    function hideSummary() {
+      document.getElementById('summary-overlay').classList.remove('show');
+    }
+
+    function copySummaryNotes() {
+      var lines = chain.map(function(item, i) {
+        return (i + 1) + '. ' + item.start + ' → ' + item.dest;
+      });
+      var text = 'Pose Popcorn — Practice Chain\n\n' + lines.join('\n');
+      navigator.clipboard.writeText(text).catch(function() {});
+      var btn = document.getElementById('summary-copy-btn');
+      btn.textContent = 'Copied!';
+      setTimeout(function() {
+        btn.innerHTML = '<span class="material-symbols-sharp">content_copy</span> Copy Chain';
+      }, 1800);
+    }
+
+    function startNewChain() {
+      hideSummary();
+      chain = [];
+      chainName    = null;
+      chainSavedAt = null;
+      saveToStorage();
+      setChainTitle('Chain');
+      startPose = pickPose(null);
+      destPose  = pickPose(startPose);
+      renderDeck();
+      renderChain();
+    }
+
+    // ─── INIT ────────────────────────────────────────────────────
+    function setChainTitle(name) {
+      document.getElementById('chain-title').textContent = name;
+      document.getElementById('chain-title-edit-btn').style.display = name && name !== 'Chain' ? '' : 'none';
+    }
+
+    function startChainRename() {
+      var titleEl = document.getElementById('chain-title');
+      var editBtn = document.getElementById('chain-title-edit-btn');
+
+      var sizer = document.createElement('span');
+      sizer.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;pointer-events:none;padding:0;border:0';
+      document.body.appendChild(sizer);
+
+      var input = document.createElement('input');
+      input.className = 'chain-title-input';
+      input.value = chainName || '';
+      input.maxLength = 80;
+
+      function syncWidth() {
+        sizer.textContent = input.value || ' ';
+        input.style.width = (sizer.offsetWidth + 4) + 'px';
+      }
+
+      input.addEventListener('input', syncWidth);
+
+      var saveBtn = document.createElement('button');
+      saveBtn.className = 'chain-title-btn';
+      saveBtn.title = 'Save name';
+      saveBtn.innerHTML = '<span class="material-symbols-sharp">check</span>';
+
+      var cancelBtn = document.createElement('button');
+      cancelBtn.className = 'chain-title-btn';
+      cancelBtn.title = 'Cancel';
+      cancelBtn.innerHTML = '<span class="material-symbols-sharp">close</span>';
+
+      titleEl.replaceWith(input);
+      editBtn.replaceWith(saveBtn);
+      saveBtn.after(cancelBtn);
+
+      // Copy computed styles after input is in DOM so sizer measures correctly
+      var cs = window.getComputedStyle(input);
+      sizer.style.fontFamily    = cs.fontFamily;
+      sizer.style.fontSize      = cs.fontSize;
+      sizer.style.fontWeight    = cs.fontWeight;
+      sizer.style.letterSpacing = cs.letterSpacing;
+      syncWidth();
+
+      input.focus();
+      input.select();
+
+      function restore(name) {
+        sizer.remove();
+        var span = document.createElement('span');
+        span.className = 'chain-title';
+        span.id = 'chain-title';
+        span.textContent = name;
+        input.replaceWith(span);
+        saveBtn.replaceWith(editBtn);
+        cancelBtn.remove();
+      }
+
+      function commit() {
+        var newName = input.value.trim();
+        if (!newName) { input.focus(); return; }
+        if (newName !== chainName && chainSavedAt) {
+          try {
+            var LS_SAVED = 'fs-pose-connector-saved';
+            var saved = JSON.parse(localStorage.getItem(LS_SAVED) || '[]');
+            saved = saved.map(function(c) {
+              return String(c.savedAt) === String(chainSavedAt) ? Object.assign({}, c, { name: newName }) : c;
+            });
+            localStorage.setItem(LS_SAVED, JSON.stringify(saved));
+          } catch(e) {}
+        }
+        chainName = newName;
+        restore(chainName);
+      }
+
+      function cancel() { restore(chainName || 'Chain'); }
+
+      saveBtn.addEventListener('click', commit);
+      cancelBtn.addEventListener('click', cancel);
+      input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') { e.preventDefault(); commit(); }
+        if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+      });
+    }
+
+    function getParam(name) {
+      var m = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+
+    function init() {
+      var chainId = getParam('chain');
+      if (chainId) {
+        try {
+          var saved = JSON.parse(localStorage.getItem('fs-pose-connector-saved') || '[]');
+          var match = saved.find(function(c) { return String(c.savedAt) === chainId; });
+          if (match && match.transitions && match.transitions.length) {
+            chain = match.transitions.map(function(t) { return { start: t.start, dest: t.dest, note: t.note || '' }; });
+            chainName    = match.name || null;
+            chainSavedAt = match.savedAt || null;
+            var last = chain[chain.length - 1];
+            startPose = last.start;
+            destPose  = last.dest;
+            saveToStorage();
+            renderDeck();
+            renderChain();
+            setChainTitle(chainName || 'Chain');
+            document.getElementById('save-btn').classList.add('saved');
+            history.replaceState(null, '', window.location.pathname);
+            return;
+          }
+        } catch(e) {}
+      }
+      startPose = pickPose(null);
+      destPose  = pickPose(startPose);
+      pushToChain();
+      renderDeck();
+      renderChain();
+    }
+
+    // ─── EVENTS ──────────────────────────────────────────────────
+    function noteDisplayHTML(idx, text) {
+      var noteText = text
+        ? '<span class="chain-note-text" data-action="edit" data-idx="' + idx + '">' + escHtml(text) + '</span>'
+        : '<span class="chain-note-text empty" data-action="edit" data-idx="' + idx + '">Add a note…</span>';
+      return noteText
+        + '<button class="chain-note-btn" data-action="edit" data-idx="' + idx + '" aria-label="Edit note">'
+        + '<span class="material-symbols-sharp">edit</span>'
+        + '</button>';
+    }
+
+    function noteEditHTML(idx, text) {
+      return '<textarea class="chain-note-input" data-idx="' + idx + '" rows="1" placeholder="Add a note…">'
+        + escHtml(text)
+        + '</textarea>'
+        + '<button class="chain-note-btn" data-action="save" data-idx="' + idx + '" aria-label="Save note">'
+        + '<span class="material-symbols-sharp">check</span>'
+        + '</button>'
+        + '<button class="chain-note-btn" data-action="cancel" data-idx="' + idx + '" aria-label="Cancel">'
+        + '<span class="material-symbols-sharp">close</span>'
+        + '</button>';
+    }
+
+    document.getElementById('chain-list').addEventListener('click', function(e) {
+      var btn = e.target.closest('.chain-note-btn') || e.target.closest('.chain-note-text');
+      if (!btn) return;
+      var action = btn.dataset.action;
+      var idx    = parseInt(btn.dataset.idx);
+      var wrap   = btn.closest('.chain-note-wrap');
+      if (!wrap || isNaN(idx) || !chain[idx]) return;
+
+      if (action === 'edit') {
+        wrap.innerHTML = noteEditHTML(idx, chain[idx].note || '');
+        var ta = wrap.querySelector('.chain-note-input');
+        ta.style.height = 'auto';
+        ta.style.height = ta.scrollHeight + 'px';
+        ta.focus();
+        ta.setSelectionRange(ta.value.length, ta.value.length);
+      } else if (action === 'save') {
+        var ta = wrap.querySelector('.chain-note-input');
+        var note = ta ? ta.value : '';
+        chain[idx].note = note;
+        saveToStorage();
+        wrap.innerHTML = noteDisplayHTML(idx, note);
+      } else if (action === 'cancel') {
+        wrap.innerHTML = noteDisplayHTML(idx, chain[idx].note || '');
+      }
+    });
+
+    document.getElementById('chain-list').addEventListener('input', function(e) {
+      var ta = e.target.closest('.chain-note-input');
+      if (!ta) return;
+      ta.style.height = 'auto';
+      ta.style.height = ta.scrollHeight + 'px';
+    });
+
+    document.getElementById('next-pose-btn').addEventListener('click', nextPose);
+    document.getElementById('chain-title-edit-btn').addEventListener('click', startChainRename);
+    document.getElementById('save-btn').addEventListener('click', openSaveModal);
+    document.getElementById('pc-modal-cancel').addEventListener('click', closeSaveModal);
+    document.getElementById('pc-modal-confirm').addEventListener('click', confirmSaveChain);
+    document.getElementById('pc-name-input').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') confirmSaveChain();
+      if (e.key === 'Escape') closeSaveModal();
+    });
+    document.getElementById('pc-name-input').addEventListener('input', function() {
+      this.classList.remove('error');
+    });
+    document.getElementById('pc-modal').addEventListener('click', function(e) {
+      if (e.target === e.currentTarget) closeSaveModal();
+    });
+
+    document.getElementById('summary-copy-btn').addEventListener('click', copySummaryNotes);
+    document.getElementById('summary-new-btn').addEventListener('click', startNewChain);
+    document.getElementById('summary-close-btn').addEventListener('click', hideSummary);
+    document.getElementById('summary-overlay').addEventListener('click', function(e) {
+      if (e.target === e.currentTarget) hideSummary();
+    });
+
+    init();
+
+  </script>
+</body>
+</html>

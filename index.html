@@ -1160,6 +1160,12 @@
           items.push({ icon: 'edit_note', name: fl.name || 'Untitled Flow', sub: 'Cue Worksheet', href: 'cue-worksheet.html?flow=' + encodeURIComponent(fl.name), time: time });
         });
       } catch (_) {}
+      try {
+        var poseChains = JSON.parse(localStorage.getItem('fs-pose-connector-saved') || '[]');
+        poseChains.forEach(function (c) {
+          items.push({ icon: 'conversion_path', name: c.name || 'Untitled Chain', sub: 'Pose Popcorn', href: 'pose-popcorn.html?chain=' + (c.savedAt || ''), time: c.savedAt || 0 });
+        });
+      } catch (_) {}
 
 
       items.sort(function (a, b) { return b.time - a.time; });

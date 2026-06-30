@@ -567,6 +567,9 @@
       background: rgba(var(--ink-rgb), .06);
     }
     .pl-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+    .pl-modal-input.error { border-color: #e05252; }
+    @keyframes pl-shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+    .pl-modal-input.shake { animation: pl-shake .3s ease; }
 
     /* ── Responsive ───────────────────────────────────────────── */
     @media (max-width: 680px) {
@@ -1203,7 +1206,17 @@
     }
 
     function confirmSave() {
-      const title = document.getElementById('pl-title-input').value.trim() || defaultTitle();
+      const input = document.getElementById('pl-title-input');
+      const title = input.value.trim();
+      if (!title) {
+        input.classList.remove('shake');
+        input.classList.add('error');
+        void input.offsetWidth;
+        input.classList.add('shake');
+        input.focus();
+        return;
+      }
+      input.classList.remove('error', 'shake');
       closeSaveModal();
 
       const KEY = 'flowschool_playlists';
@@ -1242,6 +1255,9 @@
     document.getElementById('pl-title-input').addEventListener('keydown', e => {
       if (e.key === 'Enter') confirmSave();
       if (e.key === 'Escape') closeSaveModal();
+    });
+    document.getElementById('pl-title-input').addEventListener('input', function() {
+      this.classList.remove('error');
     });
     document.getElementById('pl-modal').addEventListener('click', e => {
       if (e.target === e.currentTarget) closeSaveModal();

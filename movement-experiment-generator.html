@@ -274,6 +274,7 @@
 
     <div class="controls-bar">
       <div class="filter-chips" id="filter-chips">
+        <button class="filter-chip active" data-tag="all">All</button>
         <button class="filter-chip" data-tag="props">Props</button>
         <button class="filter-chip" data-tag="floor">Floor-Based</button>
         <button class="filter-chip" data-tag="standing">Standing</button>
@@ -1124,12 +1125,15 @@
       const chip = e.target.closest('.filter-chip');
       if (!chip) return;
       const tag = chip.dataset.tag;
-      const wasActive = activeFilters.has(tag);
+      const wasActive = chip.classList.contains('active');
 
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
       activeFilters.clear();
 
-      if (!wasActive) {
+      if (tag === 'all' || wasActive) {
+        // clicking All, or toggling off a category → reset to All
+        document.querySelector('.filter-chip[data-tag="all"]').classList.add('active');
+      } else {
         activeFilters.add(tag);
         chip.classList.add('active');
       }

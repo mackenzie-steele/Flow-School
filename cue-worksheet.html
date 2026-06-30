@@ -1015,6 +1015,10 @@ function initRows(n) {
 function addRow() {
   rows.push(makeRow());
   renderRows();
+  if (flowName) {
+    flowName = '';
+    setFlowTitle('');
+  }
   // Focus verb input of new row
   const allRows = document.querySelectorAll('.cue-row');
   const last = allRows[allRows.length - 1];
@@ -1259,7 +1263,7 @@ function startRename() {
   const editBtn = document.getElementById('ws-edit-btn');
 
   const sizer = document.createElement('span');
-  sizer.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;pointer-events:none;font-family:inherit;font-size:inherit;font-weight:inherit;letter-spacing:inherit;padding:0;border:0';
+  sizer.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;pointer-events:none;padding:0;border:0';
   document.body.appendChild(sizer);
 
   const input = document.createElement('input');
@@ -1267,10 +1271,10 @@ function startRename() {
   input.value = flowName;
 
   function syncWidth() {
-    sizer.textContent = input.value || ' ';
-    input.style.width = sizer.offsetWidth + 'px';
+    sizer.textContent = input.value || ' ';
+    input.style.width = (sizer.offsetWidth + 4) + 'px';
   }
-  syncWidth();
+
   input.addEventListener('input', syncWidth);
 
   const saveBtn = document.createElement('button');
@@ -1286,6 +1290,15 @@ function startRename() {
   titleEl.replaceWith(input);
   editBtn.replaceWith(saveBtn);
   saveBtn.after(cancelBtn);
+
+  // Copy computed styles after input is in DOM so sizer measures correctly
+  const cs = window.getComputedStyle(input);
+  sizer.style.fontFamily   = cs.fontFamily;
+  sizer.style.fontSize     = cs.fontSize;
+  sizer.style.fontWeight   = cs.fontWeight;
+  sizer.style.letterSpacing = cs.letterSpacing;
+  syncWidth();
+
   input.focus();
   input.select();
 
@@ -1583,6 +1596,7 @@ function init() {
     if (!name) { document.getElementById('ws-modal-input').focus(); return; }
     closeSaveModal();
     saveToLocal(name);
+    setFlowTitle(name);
   });
   document.getElementById('ws-modal-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') document.getElementById('ws-modal-confirm').click();
